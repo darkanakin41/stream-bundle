@@ -1,0 +1,10 @@
+services:
+  PLejeune\StreamBundle\Service\StreamService:
+    public: true
+    class: PLejeune\StreamBundle\Service\StreamService
+    arguments: ["@service_container"]
+    tags:
+      - { name: twig.extension }
+  plejeune.stream:
+    public: true
+    alias: PLejeune\StreamBundle\Service\StreamService
