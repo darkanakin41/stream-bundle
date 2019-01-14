@@ -22,7 +22,6 @@ class StreamCategoryRepository extends \Doctrine\ORM\EntityRepository
      */
     public function findByKey($provider, $plateformKey){
         $qb = $this->createQueryBuilder("c");
-
         $categories = $qb->getQuery()->getResult();
 
         $result = null;

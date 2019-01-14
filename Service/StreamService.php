@@ -38,6 +38,20 @@ class StreamService
     }
 
     /**
+     * Update streams
+     *
+     * @param Stream[] $streams
+     * @param $provider
+     *
+     * @throws \Exception
+     */
+    public function refresh(array $streams, $provider){
+        $requester = $this->getRequester($provider);
+
+        $requester->refresh($streams);
+    }
+
+    /**
      * Retrieve the requester from the providers
      *
      * @param string $provider

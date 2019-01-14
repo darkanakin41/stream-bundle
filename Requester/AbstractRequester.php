@@ -2,6 +2,7 @@
 namespace PLejeune\StreamBundle\Requester;
 
 use PLejeune\ApiBundle\Service\ApiService;
+use PLejeune\StreamBundle\Entity\Stream;
 use PLejeune\StreamBundle\Entity\StreamCategory;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -27,4 +28,10 @@ abstract class AbstractRequester
      * @return integer Number of stream created
      */
     abstract public function updateFromCategory(StreamCategory $category);
+
+    /**
+     * Update the given stream
+     * @param Stream[] $streams
+     */
+    abstract public function refresh(array $streams);
 }

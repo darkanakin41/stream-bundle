@@ -23,19 +23,21 @@ class TwitchRequester extends AbstractRequester
 
         $streams = 0;
 
-        foreach($category->getPlatformKeys() as $key => $value){
-            if(stripos($key, "twitch_") !== 0) continue;
+        foreach ($category->getPlatformKeys() as $key => $value) {
+            if (stripos($key, "twitch_") !== 0) continue;
 
             $cursor = null;
-            for($i = 0; $i < self::MAX_PAGE; $i++){
+            for ($i = 0; $i < self::MAX_PAGE; $i++) {
                 $data = $endpoint->getGameStreams($value, $cursor);
-                if(isset($data['data'])){
-                    foreach($data['data'] as $streamData){
-                        $streams += $this->createStream($category, $streamData);
+                if (isset($data['data'])) {
+                    foreach ($data['data'] as $streamData) {
+                        $streams += $this->createStream($streamData, $category);
                     }
+                }else{
+                    // TODO Create exception
                 }
                 $this->registry->getManager()->flush();
-                if(isset($data['pagination']) && isset($data['pagination']['cursor'])) $cursor = $data['pagination']['cursor'];
+                if (isset($data['pagination']) && isset($data['pagination']['cursor'])) $cursor = $data['pagination']['cursor'];
                 else break;
             }
         }
@@ -52,10 +54,11 @@ class TwitchRequester extends AbstractRequester
      * @return int 1 if created, 0 if not
      * @throws \Exception
      */
-    private function createStream(StreamCategory $category, array $streamData){
+    private function createStream(array $streamData, StreamCategory $category = null)
+    {
         $stream = $this->registry->getRepository(Stream::class)->findOneBy(['identifier' => strtolower($streamData['user_name'])]);
         $created = 0;
-        if($stream === null){
+        if ($stream === null) {
             $stream = new Stream();
             $stream->setName($streamData['user_name']);
             $stream->setPlatform(ProviderNomenclature::TWITCH);
@@ -64,15 +67,28 @@ class TwitchRequester extends AbstractRequester
             $created = 1;
         }
 
-        $this->updateStream($stream, $category, $streamData);
+        $this->updateStream($stream, $streamData, $category);
 
         $this->registry->getManager()->persist($stream);
         return $created;
     }
 
-    private function updateStream(Stream $stream, StreamCategory $streamCategory, array $streamData = []){
+    /**
+     * Update stream with given data
+     *
+     * @param Stream $stream
+     * @param StreamCategory $streamCategory
+     * @param array $streamData
+     *
+     * @return void 1 if created, 0 if not
+     *
+     * @throws \Exception
+     */
+    private function updateStream(Stream $stream, array $streamData = [], StreamCategory $streamCategory = null)
+    {
+        $stream->setUpdated(new \DateTime());
 
-        if(count($streamData) === 0){
+        if (count($streamData) === 0) {
             $stream->setStatus(StatusNomenclature::OFFLINE);
             $stream->setViewers(null);
             $stream->setCategory(null);
@@ -85,30 +101,63 @@ class TwitchRequester extends AbstractRequester
         $stream->setViewers($streamData['viewer_count']);
         $stream->setPreview($streamData['thumbnail_url']);
         $stream->setTags([]);
-        $stream->setUpdated(new \DateTime());
 
         $categoryUpdated = false;
-        foreach($streamCategory->getPlatformKeys() as $key => $value){
-            if(stripos($key, "twitch_") !== 0) continue;
-            if($value !== $streamData['game_id']) continue;
-            $stream->setCategory($streamCategory);
-            $categoryUpdated = true;
-            break;
+        if($streamCategory !== null){
+            foreach ($streamCategory->getPlatformKeys() as $key => $value) {
+                if (stripos($key, "twitch_") !== 0) continue;
+                if ($value !== $streamData['game_id']) continue;
+                $stream->setCategory($streamCategory);
+                $categoryUpdated = true;
+                break;
+            }
         }
 
-        if(!$categoryUpdated){
+        if (!$categoryUpdated) {
             $category = $this->registry->getRepository(StreamCategory::class)->findByKey($stream->getPlatform(), $streamData['game_id']);
-            if($category === null){
+            if ($category === null) {
                 $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::GAMES);
                 $data = $endpoint->getData($streamData['game_id']);
                 $category = new StreamCategory();
                 $category->setRefresh(false);
                 $category->setDisplayed(false);
                 $category->setTitle($data["data"][0]['name']);
+                $category->setPlatformKeys(['twitch_0' => $streamData['game_id']]);
 
                 $this->registry->getManager()->persist($category);
             }
             $stream->setCategory($category);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refresh(array $streams)
+    {
+        $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::STREAM);
+
+        $streamsId = [];
+        foreach ($streams as $stream){
+            $streamsId[] = $stream->getIdentifier();
+            $this->updateStream($stream);
+        }
+
+        $cursor = null;
+        $empty = false;
+        while (!$empty) {
+            $data = $endpoint->getStreams($streamsId, $cursor);
+            if (isset($data['data'])) {
+                $empty = count($data['data']) === 0;
+                foreach ($data['data'] as $streamData) {
+                    $this->createStream($streamData, null);
+                }
+            }else{
+                // TODO Create exception
+            }
+            $this->registry->getManager()->flush();
+            if (isset($data['pagination']) && isset($data['pagination']['cursor'])) $cursor = $data['pagination']['cursor'];
+            else break;
         }
     }
 }

@@ -8,3 +8,15 @@ services:
   plejeune.stream:
     public: true
     alias: PLejeune\StreamBundle\Service\StreamService
+
+
+  plejeune.stream.command.retrieve:
+    public: true
+    class: PLejeune\StreamBundle\Command\RetrieveCommand
+    tags:
+      - { name: console.command }
+  plejeune.stream.command.refresh:
+    public: true
+    class: PLejeune\StreamBundle\Command\RefreshCommand
+    tags:
+      - { name: console.command }
