@@ -23,7 +23,7 @@ class StreamRepository extends \Doctrine\ORM\EntityRepository
         $orders = ["ASC", "DESC"];
 
         $qb = $this->createQueryBuilder("s");
-        $qb->leftJoin("s.category", "c");
+        $qb->leftJoin("s.category", "sc");
         $qb->where("s.status = :status");
         $qb->andWhere("sc.displayed = 1");
 
