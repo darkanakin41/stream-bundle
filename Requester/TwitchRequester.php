@@ -22,6 +22,7 @@ class TwitchRequester extends AbstractRequester
         $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::STREAM);
 
         $streams = 0;
+        $streamsId = [];
 
         foreach ($category->getPlatformKeys() as $key => $value) {
             if (stripos($key, "twitch_") !== 0) continue;
@@ -32,6 +33,7 @@ class TwitchRequester extends AbstractRequester
                 if (isset($data['data'])) {
                     foreach ($data['data'] as $streamData) {
                         $streams += $this->createStream($streamData, $category);
+                        $streamsId[] = strtolower($streamData['user_name']);
                     }
                 }else{
                     // TODO Create exception
@@ -42,6 +44,7 @@ class TwitchRequester extends AbstractRequester
             }
         }
 
+        $this->updateAvatars($streamsId);
 
         return $streams;
     }
@@ -63,6 +66,7 @@ class TwitchRequester extends AbstractRequester
             $stream->setName($streamData['user_name']);
             $stream->setPlatform(ProviderNomenclature::TWITCH);
             $stream->setIdentifier(strtolower($streamData['user_name']));
+            $stream->setHightlighted(false);
 
             $created = 1;
         }
@@ -117,7 +121,7 @@ class TwitchRequester extends AbstractRequester
 
         if (!$categoryUpdated) {
             $category = $this->registry->getRepository(StreamCategory::class)->findByKey($stream->getPlatform(), $streamData['game_id']);
-            if ($category === null) {
+            if ($category === null && $streamData['game_id'] != 0) {
                 $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::GAMES);
                 $data = $endpoint->getData($streamData['game_id']);
                 $category = new StreamCategory();
@@ -160,6 +164,34 @@ class TwitchRequester extends AbstractRequester
             $this->registry->getManager()->flush();
             if (isset($data['pagination']) && isset($data['pagination']['cursor'])) $cursor = $data['pagination']['cursor'];
             else break;
+        }
+
+        $this->updateAvatars($streamsId);
+    }
+
+    /**
+     * @param string[] $streamsId
+     * @throws \Exception
+     */
+    private function updateAvatars(array $streamsId){
+        $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::USER);
+
+
+        $i = 0;
+
+        while (!empty(array_slice($streamsId, self::MAX_PAGE * $i, self::MAX_PAGE))) {
+            $data = $endpoint->getUsers(array_slice($streamsId, self::MAX_PAGE * $i, self::MAX_PAGE));
+            if (isset($data['data'])) {
+                foreach ($data['data'] as $streamData) {
+                    $stream = $this->registry->getRepository(Stream::class)->findOneBy(['identifier' => $streamData['login']]);
+                    $stream->setLogo($streamData['profile_image_url']);
+                    $this->registry->getManager()->persist($stream);
+                }
+            }else{
+                // TODO Create exception
+            }
+            $i++;
+            $this->registry->getManager()->flush();
         }
     }
 }

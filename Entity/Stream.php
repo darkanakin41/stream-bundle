@@ -50,12 +50,22 @@ class Stream
     /**
      * @var string|null
      */
+    private $logo;
+
+    /**
+     * @var string|null
+     */
     private $preview;
 
     /**
      * @var array
      */
     private $tags;
+
+    /**
+     * @var boolean
+     */
+    private $hightlighted;
 
     /**
      * @var \PLejeune\StreamBundle\Entity\StreamCategory
@@ -340,5 +350,41 @@ class Stream
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    /**
+     * @param string|null $logo
+     * @return Stream
+     */
+    public function setLogo(?string $logo): Stream
+    {
+        $this->logo = $logo;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHightlighted(): bool
+    {
+        return $this->hightlighted;
+    }
+
+    /**
+     * @param bool $hightlighted
+     * @return Stream
+     */
+    public function setHightlighted(bool $hightlighted): Stream
+    {
+        $this->hightlighted = $hightlighted;
+        return $this;
     }
 }

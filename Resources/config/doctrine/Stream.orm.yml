@@ -36,12 +36,18 @@ PLejeune\StreamBundle\Entity\Stream:
         viewers:
             type: integer
             nullable: true
+        logo:
+            type: string
+            length: 255
+            nullable: true
         preview:
             type: string
             length: 255
             nullable: true
         tags:
             type: array
+        hightlighted:
+            type: boolean
         updated:
             type: datetime
     manyToOne:
