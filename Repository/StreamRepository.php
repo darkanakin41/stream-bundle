@@ -3,6 +3,7 @@
 namespace PLejeune\StreamBundle\Repository;
 
 use PLejeune\StreamBundle\Entity\Stream;
+use PLejeune\StreamBundle\Nomenclature\StatusNomenclature;
 
 /**
  * StreamRepository
@@ -29,7 +30,7 @@ class StreamRepository extends \Doctrine\ORM\EntityRepository
 
         $qb->orderBy(sprintf("s.%s", $fields[array_rand($fields)]), $orders[array_rand($orders)]);
 
-        $qb->setParameter("status", "1");
+        $qb->setParameter("status", StatusNomenclature::ONLINE);
         $qb->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
