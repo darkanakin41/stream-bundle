@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "php": "^7.0",
+    "php": "^7",
     "knplabs/knp-paginator-bundle": "dev-master",
     "plejeune/core-bundle": "dev-master",
     "plejeune/api-bundle": "dev-master"
