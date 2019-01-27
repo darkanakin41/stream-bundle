@@ -42,10 +42,11 @@ class StreamService
      * Create a stream based on his name and URL
      * @param string $url
      * @param string $name
+     * @param bool $highlighted
      * @return bool true if created, false if not
      * @throws \Exception
      */
-    public function create($url, $name)
+    public function create($url, $name, $highlighted = false)
     {
         if ($url === null) {
             return false;
@@ -53,7 +54,7 @@ class StreamService
         $stream = new Stream();
         $stream->setIdentifier(StreamTool::getIdentifiant($url));
         $stream->setName($name);
-        $stream->setHighlighted(false);
+        $stream->setHighlighted($highlighted);
         $stream->setPlatform(StreamTool::getProvider($url));
 
         $exist = $this->container->get("doctrine")->getRepository(Stream::class)->findOneBy(array(
