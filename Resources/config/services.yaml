@@ -3,12 +3,16 @@ services:
     public: true
     class: PLejeune\StreamBundle\Service\StreamService
     arguments: ["@service_container"]
-    tags:
-      - { name: twig.extension }
   plejeune.stream:
     public: true
     alias: PLejeune\StreamBundle\Service\StreamService
 
+  plejeune.stream.twig:
+    public: true
+    class: PLejeune\StreamBundle\Extension\StreamExtension
+    arguments: ["@service_container"]
+    tags:
+      - { name: twig.extension }
 
   plejeune.stream.command.retrieve:
     public: true

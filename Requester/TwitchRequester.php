@@ -66,7 +66,7 @@ class TwitchRequester extends AbstractRequester
             $stream->setName($streamData['user_name']);
             $stream->setPlatform(ProviderNomenclature::TWITCH);
             $stream->setIdentifier(strtolower($streamData['user_name']));
-            $stream->setHightlighted(false);
+            $stream->setHighlighted(false);
 
             $created = 1;
         }

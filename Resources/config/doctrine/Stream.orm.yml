@@ -46,7 +46,7 @@ PLejeune\StreamBundle\Entity\Stream:
             nullable: true
         tags:
             type: array
-        hightlighted:
+        highlighted:
             type: boolean
         updated:
             type: datetime

@@ -2,6 +2,8 @@
 
 namespace PLejeune\StreamBundle\Repository;
 
+use PLejeune\StreamBundle\Entity\Stream;
+
 /**
  * StreamRepository
  *
@@ -10,4 +12,27 @@ namespace PLejeune\StreamBundle\Repository;
  */
 class StreamRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Get a random stream
+     * @return null|Stream
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findRandom() {
+        $fields = ["viewers", "updated", "language", "platform", "viewers", "id"];
+        $orders = ["ASC", "DESC"];
+
+        $qb = $this->createQueryBuilder("s");
+        $qb->leftJoin("s.category", "c");
+        $qb->where("s.status = :status");
+        $qb->andWhere("sc.displayed = 1");
+
+        $qb->orderBy(sprintf("s.%s", $fields[array_rand($fields)]), $orders[array_rand($orders)]);
+
+        $qb->setParameter("status", "1");
+        $qb->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
 }

@@ -65,7 +65,7 @@ class Stream
     /**
      * @var boolean
      */
-    private $hightlighted;
+    private $highlighted;
 
     /**
      * @var \PLejeune\StreamBundle\Entity\StreamCategory
@@ -373,18 +373,18 @@ class Stream
     /**
      * @return bool
      */
-    public function isHightlighted(): bool
+    public function isHighlighted(): bool
     {
-        return $this->hightlighted;
+        return $this->highlighted;
     }
 
     /**
-     * @param bool $hightlighted
+     * @param bool $highlighted
      * @return Stream
      */
-    public function setHightlighted(bool $hightlighted): Stream
+    public function setHighlighted(bool $highlighted): Stream
     {
-        $this->hightlighted = $hightlighted;
+        $this->highlighted = $highlighted;
         return $this;
     }
 }
