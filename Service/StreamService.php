@@ -5,6 +5,7 @@ namespace PLejeune\StreamBundle\Service;
 
 use PLejeune\StreamBundle\Entity\Stream;
 use PLejeune\StreamBundle\Entity\StreamCategory;
+use PLejeune\StreamBundle\Nomenclature\StatusNomenclature;
 use PLejeune\StreamBundle\Requester\AbstractRequester;
 use PLejeune\StreamBundle\Tool\StreamTool;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -56,6 +57,9 @@ class StreamService
         $stream->setName($name);
         $stream->setHighlighted($highlighted);
         $stream->setPlatform(StreamTool::getProvider($url));
+        $stream->setStatus(StatusNomenclature::OFFLINE);
+        $stream->setUpdated(new \DateTime());
+        $stream->setTags([]);
 
         $exist = $this->container->get("doctrine")->getRepository(Stream::class)->findOneBy(array(
             'identifier' => $stream->getIdentifier(),
