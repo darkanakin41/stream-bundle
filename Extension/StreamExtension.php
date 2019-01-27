@@ -40,6 +40,7 @@ class StreamExtension extends \Twig_Extension
             new \Twig_SimpleFunction('plejeune_stream_render_chat', [$this, 'renderChat'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('plejeune_stream_language', [$this, 'language']),
             new \Twig_SimpleFunction('plejeune_stream_have_chat', [$this, 'haveChat']),
+            new \Twig_SimpleFunction('plejeune_stream_preview', [$this, 'preview']),
         );
     }
 
@@ -114,6 +115,20 @@ class StreamExtension extends \Twig_Extension
             case "zh" :
                 return "cn";
         }
+    }
+
+    /**
+     * Get the lang of the stream
+     *
+     * @param Stream $stream
+     * @param int $width
+     * @param int $height
+     *
+     * @return string
+     */
+    public function preview(Stream $stream, $width = 620, $height = 380)
+    {
+        return str_ireplace(['{width}','{height}'], [$width, $height], $stream->getPreview());
     }
 
 }
