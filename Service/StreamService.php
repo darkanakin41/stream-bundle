@@ -58,7 +58,7 @@ class StreamService
         $stream->setPlatform(StreamTool::getProvider($url));
 
         $exist = $this->container->get("doctrine")->getRepository(Stream::class)->findOneBy(array(
-            'provider' => $stream->getIdentifier(),
+            'identifier' => $stream->getIdentifier(),
             'platform' => $stream->getPlatform(),
         ));
 
