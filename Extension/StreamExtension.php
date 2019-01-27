@@ -1,6 +1,6 @@
 <?php
 
-namespace PLejeune\MediaBundle\Extension;
+namespace PLejeune\StreamBundle\Extension;
 
 
 use PLejeune\MediaBundle\Entity\File;
