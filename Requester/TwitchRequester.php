@@ -102,7 +102,8 @@ class TwitchRequester extends AbstractRequester
         $stream->setTitle($streamData['title']);
         $stream->setStatus(StatusNomenclature::ONLINE);
         if($streamData['language'] !== 'other'){
-            $stream->setLanguage($streamData['language']);
+            $languages = explode('-', $streamData['language']);
+            $stream->setLanguage(array_shift($languages));
         }
         $stream->setViewers($streamData['viewer_count']);
         $stream->setPreview($streamData['thumbnail_url']);
