@@ -104,7 +104,7 @@ class StreamService
     private function getRequester($provider){
         $classname = sprintf('PLejeune\\StreamBundle\\Requester\\%sRequester',ucfirst($provider));
         if(!class_exists($classname)) throw new \Exception('unhandled_provider');
-        $object = new $classname($this->container->get('doctrine'), $this->container->get('plejeune.api'));
+        $object = new $classname($this->container->get('doctrine'), $this->container->get('plejeune.api'), $this->container->get('plejeune.stream.twig'));
         return $object;
     }
 }
