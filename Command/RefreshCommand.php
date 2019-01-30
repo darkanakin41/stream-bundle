@@ -23,11 +23,13 @@ class RefreshCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $streamService = $this->getContainer()->get('plejeune.stream');
 
-        foreach(ProviderNomenclature::getAllConstants() as $provider){
-            $output->writeln(sprintf(sprintf("%s : Récupération des streams à mettre à jour", ucfirst($provider))));
-            $streams = $doctrine->getRepository(Stream::class)->findBy(['platform' => $provider], ['updated' => 'ASC'], 100);
-            $streamService->refresh($streams, $provider);
-            $output->writeln(sprintf(sprintf("%s : %d streams mis à jour", ucfirst($provider), count($streams))));
+        foreach (ProviderNomenclature::getAllConstants() as $provider) {
+            for ($i = 0; $i < 10; $i++) {
+                $output->writeln(sprintf(sprintf("[%s] %s :: Itération %d :: Récupération des streams à mettre à jour", (new \DateTime())->format('Y-m-d H:i:s'), ucfirst($provider), $i + 1)));
+                $streams = $doctrine->getRepository(Stream::class)->findBy(['platform' => $provider], ['updated' => 'ASC'], 100);
+                $streamService->refresh($streams, $provider);
+                $output->writeln(sprintf(sprintf("[%s] %s :: Itération %d :: %d streams mis à jour", (new \DateTime())->format('Y-m-d H:i:s'), ucfirst($provider), $i + 1, count($streams))));
+            }
         }
     }
 
