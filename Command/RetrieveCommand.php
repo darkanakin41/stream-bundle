@@ -5,6 +5,7 @@ namespace PLejeune\StreamBundle\Command;
 use PLejeune\StreamBundle\Entity\StreamCategory;
 use PLejeune\StreamBundle\Nomenclature\ProviderNomenclature;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,20 +24,33 @@ class RetrieveCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $streamService = $this->getContainer()->get('plejeune.stream');
 
-        $output->writeln(sprintf("Recuperation des catégories de stream à mettre à jour START"));
         $categories = $doctrine->getRepository(StreamCategory::class)->findBy(['refresh' => true]);
 
-        $output->writeln(sprintf("%d catégories", count($categories)));
-        foreach($categories as $key => $category){
-            $output->writeln(sprintf("%d/%d %s : Recuperation des nouveaux streams", $key + 1, count($categories), $category->getTitle()));
+        $created = 0;
 
+        $progressBar = new ProgressBar($output, count($categories));
+        $progressBar->setFormat('Catégories à traiter : %current%/%max% [%bar%] %message% %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+        $progressBar->setMessage(sprintf('(Streams créés : %d)', $created));
+
+        ProgressBar::setPlaceholderFormatterDefinition(
+            'created',
+            function () use ($created) {
+                return $created;
+            }
+        );
+
+        $progressBar->start();
+        foreach($categories as $key => $category){
             foreach(ProviderNomenclature::getAllConstants() as $provider){
-                $creations = $streamService->getFromGame($category, $provider);
-                $output->writeln(sprintf("==> %s : %d nouveaux streams", ucfirst($provider), $creations));
+                $created += $streamService->getFromGame($category, $provider);
             }
 
-            $output->writeln(sprintf("%d/%d %s : Recuperation des nouveaux streams DONE", $key + 1, count($categories), $category->getTitle()));
+            $progressBar->setMessage(sprintf('(Streams créés : %d)', $created));
+            $progressBar->advance();
         }
+        $progressBar->finish();
+
+        $output->writeln("");
     }
 
 }

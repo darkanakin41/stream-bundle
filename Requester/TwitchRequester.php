@@ -3,6 +3,9 @@
 namespace PLejeune\StreamBundle\Requester;
 
 
+use PLejeune\ApiBundle\EndPoint\Twitch\GamesEndPoint;
+use PLejeune\ApiBundle\EndPoint\Twitch\StreamEndPoint;
+use PLejeune\ApiBundle\EndPoint\Twitch\UserEndPoint;
 use PLejeune\ApiBundle\Nomenclature\ClientNomenclature;
 use PLejeune\ApiBundle\Nomenclature\EndPointNomenclature;
 use PLejeune\StreamBundle\Entity\Stream;
@@ -16,9 +19,11 @@ class TwitchRequester extends AbstractRequester
 
     /**
      * {@inheritdoc}
+     * @throws \Exception
      */
     public function updateFromCategory(StreamCategory $category)
     {
+        /** @var StreamEndPoint $endpoint */
         $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::STREAM);
 
         $streams = 0;
@@ -35,7 +40,7 @@ class TwitchRequester extends AbstractRequester
                         $streams += $this->createStream($streamData, $category);
                         $streamsId[] = strtolower($streamData['user_name']);
                     }
-                }else{
+                } else {
                     // TODO Create exception
                 }
                 $this->registry->getManager()->flush();
@@ -53,7 +58,8 @@ class TwitchRequester extends AbstractRequester
      * Create stream
      *
      * @param StreamCategory $category
-     * @param array $streamData
+     * @param array          $streamData
+     *
      * @return int 1 if created, 0 if not
      * @throws \Exception
      */
@@ -80,9 +86,9 @@ class TwitchRequester extends AbstractRequester
     /**
      * Update stream with given data
      *
-     * @param Stream $stream
+     * @param Stream         $stream
      * @param StreamCategory $streamCategory
-     * @param array $streamData
+     * @param array          $streamData
      *
      * @return void 1 if created, 0 if not
      *
@@ -101,7 +107,7 @@ class TwitchRequester extends AbstractRequester
 
         $stream->setTitle($streamData['title']);
         $stream->setStatus(StatusNomenclature::ONLINE);
-        if($streamData['language'] !== 'other'){
+        if ($streamData['language'] !== 'other') {
             $languages = explode('-', $streamData['language']);
             $stream->setLanguage(array_shift($languages));
             $stream->setLanguage($this->streamExtension->language($stream));
@@ -111,7 +117,7 @@ class TwitchRequester extends AbstractRequester
         $stream->setTags([]);
 
         $categoryUpdated = false;
-        if($streamCategory !== null){
+        if ($streamCategory !== null) {
             foreach ($streamCategory->getPlatformKeys() as $key => $value) {
                 if (stripos($key, "twitch_") !== 0) continue;
                 if ($value !== $streamData['game_id']) continue;
@@ -121,32 +127,39 @@ class TwitchRequester extends AbstractRequester
             }
         }
 
-        if (!$categoryUpdated) {
-            $category = $this->registry->getRepository(StreamCategory::class)->findByKey($stream->getPlatform(), $streamData['game_id']);
-            if ($category === null && $streamData['game_id'] != 0) {
-                $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::GAMES);
-                $data = $endpoint->getData($streamData['game_id']);
-                $category = new StreamCategory();
-                $category->setRefresh(false);
-                $category->setDisplayed(false);
-                $category->setTitle($data["data"][0]['name']);
-                $category->setPlatformKeys(['twitch_0' => $streamData['game_id']]);
+        try {
+            if (!$categoryUpdated) {
+                $category = $this->registry->getRepository(StreamCategory::class)->findByKey($stream->getPlatform(), $streamData['game_id']);
+                if ($category === null && $streamData['game_id'] != 0) {
+                    /** @var GamesEndPoint $endpoint */
+                    $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::GAMES);
+                    $data = $endpoint->getData($streamData['game_id']);
+                    $category = new StreamCategory();
+                    $category->setRefresh(false);
+                    $category->setDisplayed(false);
+                    $category->setTitle($data["data"][0]['name']);
+                    $category->setPlatformKeys(['twitch_0' => $streamData['game_id']]);
 
-                $this->registry->getManager()->persist($category);
+                    $this->registry->getManager()->persist($category);
+                }
+                $stream->setCategory($category);
             }
-            $stream->setCategory($category);
+        } catch (\Exception $e) {
+            dump($data);
         }
     }
 
     /**
      * {@inheritdoc}
+     * @throws \Exception
      */
     public function refresh(array $streams)
     {
+        /** @var StreamEndPoint $endpoint */
         $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::STREAM);
 
         $streamsId = [];
-        foreach ($streams as $stream){
+        foreach ($streams as $stream) {
             $streamsId[] = $stream->getIdentifier();
             $this->updateStream($stream);
         }
@@ -160,7 +173,7 @@ class TwitchRequester extends AbstractRequester
                 foreach ($data['data'] as $streamData) {
                     $this->createStream($streamData, null);
                 }
-            }else{
+            } else {
                 // TODO Create exception
             }
             $this->registry->getManager()->flush();
@@ -173,11 +186,13 @@ class TwitchRequester extends AbstractRequester
 
     /**
      * @param string[] $streamsId
+     *
      * @throws \Exception
      */
-    private function updateAvatars(array $streamsId){
+    private function updateAvatars(array $streamsId)
+    {
+        /** @var UserEndPoint $endpoint */
         $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::USER);
-
 
         $i = 0;
 
@@ -189,7 +204,7 @@ class TwitchRequester extends AbstractRequester
                     $stream->setLogo($streamData['profile_image_url']);
                     $this->registry->getManager()->persist($stream);
                 }
-            }else{
+            } else {
                 // TODO Create exception
             }
             $i++;
