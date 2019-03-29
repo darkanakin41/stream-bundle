@@ -24,3 +24,4 @@ composer require plejeune/stream-bundle
 * Add more streams platform in the process
 * Handle errors from providers (mainly quota)
 * Add automatic removal of dead streams
+* [YOUTUBE] Handle IsLive events coming from VideoBundle
