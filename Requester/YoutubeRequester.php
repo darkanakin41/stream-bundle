@@ -46,10 +46,8 @@ class YoutubeRequester extends AbstractRequester
 
             $item = reset($items);
 
-            var_dump($item['snippet']['liveBroadcastContent']);
             if ($item === false || !isset($item['snippet']) || $item['snippet']['liveBroadcastContent'] !== 'live') {
                 $this->registry->getManager()->remove($stream);
-                var_dump("OFFLINE");
                 continue;
             }
 
