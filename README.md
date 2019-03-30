@@ -20,8 +20,10 @@ composer require plejeune/stream-bundle
 ``` bin\console plejeune:stream:retrieve``` : Retrieve new streams based on enabled categories in the database
 ``` bin\console plejeune:stream:refresh``` : Refresh streams stored in the database
 
+## Features 
+* Automatic removal of dead streams
+* [YOUTUBE] Handle IsLive events coming from VideoBundle
+
 ## TODO 
 * Add more streams platform in the process
 * Handle errors from providers (mainly quota)
-* Add automatic removal of dead streams
-* [YOUTUBE] Handle IsLive events coming from VideoBundle

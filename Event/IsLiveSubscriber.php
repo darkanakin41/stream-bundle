@@ -69,6 +69,7 @@ class IsLiveSubscriber implements EventSubscriberInterface
             $stream->setStatus(StatusNomenclature::ONLINE);
             $stream->setUpdated(new DateTime());
             $stream->setHighlighted(false);
+            $stream->setTags([]);
 
             $this->registry->getManager()->persist($stream);
             $this->registry->getManager()->flush();
