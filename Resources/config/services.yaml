@@ -1,4 +1,10 @@
 services:
+  PLejeune\StreamBundle\Event\IsLiveSubscriber:
+    autowire: true
+    public: true
+    class: PLejeune\StreamBundle\Event\IsLiveSubscriber
+    tags: ['kernel.event_subscriber']
+
   PLejeune\StreamBundle\Service\StreamService:
     public: true
     class: PLejeune\StreamBundle\Service\StreamService

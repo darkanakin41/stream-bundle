@@ -26,12 +26,13 @@ class StreamService
      * Retrieve streams from the category
      *
      * @param StreamCategory $streamCategory
-     * @param $provider
+     * @param                $provider
      *
      * @return integer
      * @throws \Exception
      */
-    public function getFromGame(StreamCategory $streamCategory, $provider){
+    public function getFromGame(StreamCategory $streamCategory, $provider)
+    {
         $requester = $this->getRequester($provider);
 
         $streams = $requester->updateFromCategory($streamCategory);
@@ -40,10 +41,29 @@ class StreamService
     }
 
     /**
+     * Retrieve the requester from the providers
+     *
+     * @param string $provider
+     *
+     * @return AbstractRequester
+     * @throws \Exception
+     */
+    private function getRequester($provider)
+    {
+        $classname = sprintf('PLejeune\\StreamBundle\\Requester\\%sRequester', ucfirst(strtolower($provider)));
+        var_dump($classname);
+        if (!class_exists($classname)) throw new \Exception('unhandled_provider');
+        $object = new $classname($this->container->get('doctrine'), $this->container->get('plejeune.api'), $this->container->get('plejeune.stream.twig'));
+        return $object;
+    }
+
+    /**
      * Create a stream based on his name and URL
+     *
      * @param string $url
      * @param string $name
-     * @param bool $highlighted
+     * @param bool   $highlighted
+     *
      * @return bool true if created, false if not
      * @throws \Exception
      */
@@ -78,33 +98,18 @@ class StreamService
         return true;
     }
 
-
     /**
      * Update streams
      *
      * @param Stream[] $streams
-     * @param $provider
+     * @param string   $platform
      *
      * @throws \Exception
      */
-    public function refresh(array $streams, $provider){
-        $requester = $this->getRequester($provider);
+    public function refresh(array $streams, $platform)
+    {
+        $requester = $this->getRequester($platform);
 
         $requester->refresh($streams);
-    }
-
-    /**
-     * Retrieve the requester from the providers
-     *
-     * @param string $provider
-     *
-     * @return AbstractRequester
-     * @throws \Exception
-     */
-    private function getRequester($provider){
-        $classname = sprintf('PLejeune\\StreamBundle\\Requester\\%sRequester',ucfirst($provider));
-        if(!class_exists($classname)) throw new \Exception('unhandled_provider');
-        $object = new $classname($this->container->get('doctrine'), $this->container->get('plejeune.api'), $this->container->get('plejeune.stream.twig'));
-        return $object;
     }
 }
