@@ -13,6 +13,8 @@ class StreamExtension extends \Twig_Extension
     const TWITCH = '<div id="stream-%s" data-stream="%s" data-width="%d" data-height="%d"></div>';
     const TWITCH_CHAT = '<iframe src="//www.twitch.tv/embed/%s/chat" frameborder="0" scrolling="no" width="%s" height="%s"></iframe>';
 
+    const YOUTUBE = '<iframe src="//www.youtube.com/embed/%s" id="live_embed_player_flash" allowfullscreen width="%d" height="%d" frameborder="0"></iframe>';
+
     /**
      * @var ContainerInterface
      */
@@ -58,6 +60,8 @@ class StreamExtension extends \Twig_Extension
         switch ($stream->getPlatform()) {
             case ProviderNomenclature::TWITCH :
                 return sprintf(self::TWITCH, $stream->getIdentifier(), $stream->getIdentifier(), $width, $height);
+            case ProviderNomenclature::YOUTUBE :
+                return sprintf(self::YOUTUBE, $stream->getIdentifier(), $width, $height);
         }
     }
 
