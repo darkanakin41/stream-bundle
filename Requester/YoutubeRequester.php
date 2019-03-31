@@ -84,14 +84,15 @@ class YoutubeRequester extends AbstractRequester
         $stream->setViewers($data['liveStreamingDetails']['concurrentViewers']);
 
         $categoryRepository = $this->registry->getRepository(StreamCategory::class);
-        foreach($data['snippet']['tags'] as $tag){
-            /** @var StreamCategory $category */
-            $category = $categoryRepository->findOneBy(['title' => $tag]);
-            if($category !== null){
-                $stream->setCategory($category);
-                break;
+        if(isset($data['snippet']['tags'])){
+            foreach($data['snippet']['tags'] as $tag){
+                /** @var StreamCategory $category */
+                $category = $categoryRepository->findOneBy(['title' => $tag]);
+                if($category !== null){
+                    $stream->setCategory($category);
+                    break;
+                }
             }
         }
-
     }
 }
