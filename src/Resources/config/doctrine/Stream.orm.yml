@@ -1,0 +1,60 @@
+Darkanakin41\StreamBundle\Entity\Stream:
+    type: entity
+    table: null
+    repositoryClass: Darkanakin41\StreamBundle\Repository\StreamRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+            nullable: false
+        platform:
+            type: string
+            length: 50
+            nullable: false
+        identifier:
+            type: string
+            length: 50
+            nullable: false
+        title:
+            type: string
+            length: 255
+            nullable: true
+        status:
+            type: string
+            length: 50
+            nullable: false
+        language:
+            type: string
+            length: 2
+            nullable: true
+        viewers:
+            type: integer
+            nullable: true
+        logo:
+            type: string
+            length: 255
+            nullable: true
+        preview:
+            type: string
+            length: 255
+            nullable: true
+        tags:
+            type: array
+        highlighted:
+            type: boolean
+        updated:
+            type: datetime
+    manyToOne:
+        category:
+            targetEntity: Darkanakin41\StreamBundle\Entity\StreamCategory
+            nullable: true
+            joinColumn:
+                name: category_id
+                referencedColumnName: id
+    lifecycleCallbacks: {  }

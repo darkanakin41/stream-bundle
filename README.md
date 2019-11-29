@@ -1,4 +1,4 @@
-# plejeune/stream-bundle
+# darkanakin41/stream-bundle
 This is a bundle for Symfony 4 designed to store and provide a simple way to store streams from differents platforms, monitor them and automaticaly retrieve new ones.
 
 Currently, we support automation for : 
@@ -6,24 +6,31 @@ Currently, we support automation for :
 
 ## Dependencies
 
-* [plejeune/core-bundle](https://gitlab.com/pierrelejeune/corebundle)
-* [plejeune/api-bundle](https://gitlab.com/pierrelejeune/api-bundle)
+* [darkanakin41/core-bundle](https://github.com/darkanakin41/core-bundle)
+* [darkanakin41/api-bundle](https://github.com/darkanakin41/api-bundle)
 
 ## Installation
 
 ```bash
-composer require plejeune/stream-bundle
+composer require darkanakin41/stream-bundle
 ```
 
 ## Available commands
 
-``` bin\console plejeune:stream:retrieve``` : Retrieve new streams based on enabled categories in the database
-``` bin\console plejeune:stream:refresh``` : Refresh streams stored in the database
+```bash
+#Retrieve new streams based on enabled categories in the database
+bin\console darkanakin41:stream:retrieve 
+
+#Refresh streams stored in the database
+bin\console darkanakin41:stream:refresh 
+```
 
 ## Features 
 * Automatic removal of dead streams
-* [YOUTUBE] Handle IsLive events coming from VideoBundle
+* [YOUTUBE] Handle IsLive events coming from [darkanakin41/video-bundle](https://github.com/darkanakin41/video-bundle)
 
 ## TODO 
 * Add more streams platform in the process
 * Handle errors from providers (mainly quota)
+* Create some unit tests and setup a pipeline ?
+* Move to MappedSuperClass for entities

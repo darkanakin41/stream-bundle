@@ -1,0 +1,21 @@
+Darkanakin41\StreamBundle\Entity\StreamCategory:
+    type: entity
+    table: null
+    repositoryClass: Darkanakin41\StreamBundle\Repository\StreamCategoryRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        title:
+            type: string
+            length: 255
+        platformKeys:
+            type: array
+        refresh:
+            type: boolean
+        displayed:
+            type: boolean
+    lifecycleCallbacks: {  }

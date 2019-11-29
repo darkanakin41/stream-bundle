@@ -1,11 +1,15 @@
 {
-  "name": "plejeune/stream-bundle",
+  "name": "darkanakin41/stream-bundle",
   "type": "symfony-bundle",
   "description": "Pierre LEJEUNE StreamBundle",
   "keywords": [
-    "Media Bundle"
+    "Media Bundle",
+    "symfony",
+    "stream",
+    "twitch",
+    "bundle"
   ],
-  "homepage": "https://gitlab.com/pierrelejeune/stream-bundle",
+  "homepage": "https://github.com/darkanakin41/stream-bundle",
   "license": "MIT",
   "authors": [
     {
@@ -15,24 +19,24 @@
   ],
   "require": {
     "php": "^7",
-    "knplabs/knp-paginator-bundle": "dev-master",
-    "plejeune/core-bundle": "dev-master",
-    "plejeune/api-bundle": "dev-master"
+    "darkanakin41/core-bundle": "dev-master",
+    "darkanakin41/api-bundle": "dev-master",
+    "symfony/framework-bundle": "*",
+    "symfony/orm-pack": "*",
+    "symfony/validator": "*",
+    "symfony/yaml": "*"
   },
   "config": {
     "sort-packages": true
   },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "1.0"
-    }
-  },
   "autoload": {
     "psr-4": {
-      "PLejeune\\StreamBundle\\": ""
-    },
-    "exclude-from-classmap": [
-      "/Tests/"
-    ]
+      "Darkanakin41\\StreamBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Darkanakin41\\StreamBundle\\Tests\\": "tests/"
+    }
   }
 }
