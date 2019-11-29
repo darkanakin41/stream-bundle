@@ -34,3 +34,4 @@ bin\console darkanakin41:stream:refresh
 * Handle errors from providers (mainly quota)
 * Create some unit tests and setup a pipeline ?
 * Move to MappedSuperClass for entities
+* Use a library for Twitch API
