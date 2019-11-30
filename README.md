@@ -7,7 +7,6 @@ Currently, we support automation for :
 ## Dependencies
 
 * [darkanakin41/core-bundle](https://github.com/darkanakin41/core-bundle)
-* [darkanakin41/api-bundle](https://github.com/darkanakin41/api-bundle)
 
 ## Installation
 
