@@ -19,6 +19,7 @@
   "require": {
     "php": "^7",
     "darkanakin41/core-bundle": "dev-master",
+    "doctrine/data-fixtures": "^1.4",
     "google/apiclient": "^2.0",
     "nicklaw5/twitch-api-php": "^2.1",
     "symfony/framework-bundle": "*",
@@ -38,5 +39,9 @@
     "psr-4": {
       "Darkanakin41\\StreamBundle\\Tests\\": "tests/"
     }
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.16",
+    "phpunit/phpunit": "^8.4"
   }
 }

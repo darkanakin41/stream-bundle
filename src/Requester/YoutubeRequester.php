@@ -1,16 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
+
 namespace Darkanakin41\StreamBundle\Requester;
 
-
 use Darkanakin41\StreamBundle\Endpoint\YoutubeEndpoint;
-use Darkanakin41\StreamBundle\Entity\Stream;
-use Darkanakin41\StreamBundle\Entity\StreamCategory;
 use Darkanakin41\StreamBundle\Extension\StreamExtension;
+use Darkanakin41\StreamBundle\Model\Stream;
+use Darkanakin41\StreamBundle\Model\StreamCategory;
 use DateTime;
 use Exception;
 use Google_Service_YouTube_Video;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class YoutubeRequester extends AbstractRequester
 {
@@ -20,15 +24,15 @@ class YoutubeRequester extends AbstractRequester
      */
     private $youtubeEndpoint;
 
-    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, YoutubeEndpoint $youtubeEndpoint)
+    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ContainerBuilder $containerBuilder, YoutubeEndpoint $youtubeEndpoint)
     {
-        parent::__construct($registry, $streamExtension);
+        parent::__construct($registry, $streamExtension, $containerBuilder);
         $this->youtubeEndpoint = $youtubeEndpoint;
     }
 
-
     /**
      * {@inheritdoc}
+     *
      * @throws Exception
      */
     public function updateFromCategory(StreamCategory $category)
@@ -38,11 +42,11 @@ class YoutubeRequester extends AbstractRequester
 
     /**
      * {@inheritdoc}
+     *
      * @throws Exception
      */
     public function refresh(array $streams)
     {
-
         $ids = array();
         foreach ($streams as $stream) {
             $ids[] = $stream->getIdentifier();
@@ -53,14 +57,14 @@ class YoutubeRequester extends AbstractRequester
         $items = $data->getItems();
 
         foreach ($streams as $stream) {
-            /** @var array $data->getItems() */
+            /** @var array $data ->getItems() */
             $items = array_filter($items, function (Google_Service_YouTube_Video $item) use ($stream) {
                 return $item->getId() === $stream->getIdentifier();
             });
 
             $item = reset($items);
 
-            if ($item === false || $item->getSnippet() === null || $item->getSnippet()->getLiveBroadcastContent() !== 'live') {
+            if (false === $item || null === $item->getSnippet() || 'live' !== $item->getSnippet()->getLiveBroadcastContent()) {
                 $this->registry->getManager()->remove($stream);
                 continue;
             }
@@ -74,7 +78,7 @@ class YoutubeRequester extends AbstractRequester
     }
 
     /**
-     * Update data of the stream based on retrieved informations
+     * Update data of the stream based on retrieved informations.
      *
      * @param Stream $stream
      * @param array  $data
@@ -87,9 +91,9 @@ class YoutubeRequester extends AbstractRequester
 
         $stream->setTitle($data->getSnippet()->getTitle());
 
-        if ($data->getSnippet()->getThumbnails()->getHigh() !== '') {
+        if ('' !== $data->getSnippet()->getThumbnails()->getHigh()) {
             $stream->setPreview($data->getSnippet()->getThumbnails()->getHigh());
-        } elseif ($data->getSnippet()->getThumbnails()->getMedium() !== '') {
+        } elseif ('' !== $data->getSnippet()->getThumbnails()->getMedium()) {
             $stream->setPreview($data->getSnippet()->getThumbnails()->getMedium());
         } else {
             $stream->setPreview($data->getSnippet()->getThumbnails()->getDefault());
@@ -98,11 +102,11 @@ class YoutubeRequester extends AbstractRequester
         $stream->setViewers($data->getLiveStreamingDetails()->getConcurrentViewers());
 
         $categoryRepository = $this->registry->getRepository(StreamCategory::class);
-        if(is_array($data->getSnippet()->getTags())){
+        if (is_array($data->getSnippet()->getTags())) {
             foreach ($data->getSnippet()->getTags() as $tag) {
                 /** @var StreamCategory $category */
-                $category = $categoryRepository->findOneBy(['title' => $tag]);
-                if ($category !== null) {
+                $category = $categoryRepository->findOneBy(array('title' => $tag));
+                if (null !== $category) {
                     $stream->setCategory($category);
                     break;
                 }

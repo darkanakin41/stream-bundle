@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
 
 namespace Darkanakin41\StreamBundle\Endpoint;
-
 
 use GuzzleHttp\Exception\GuzzleException;
 use NewTwitchApi\HelixGuzzleClient;
@@ -19,7 +21,7 @@ class TwitchEndpoint extends AbstractEndpoint
     private $api;
 
     /**
-     * Retrieve streams from the choosen category
+     * Retrieve streams from the choosen category.
      *
      * @param $identifier
      * @param $cursor
@@ -29,69 +31,71 @@ class TwitchEndpoint extends AbstractEndpoint
     public function getGameStreams($identifier, $cursor = null)
     {
         try {
-            $data = $this->api->getStreamsApi()->getStreams([], [], [$identifier], [], [], 100, null, $cursor);
+            $data = $this->api->getStreamsApi()->getStreams(array(), array(), array($identifier), array(), array(), 100, null, $cursor);
+
             return json_decode($data, true);
         } catch (GuzzleException $e) {
-            return [];
+            return array();
         }
     }
 
     /**
-     * Retrieve streams from the given user_login
+     * Retrieve streams from the given user_login.
      *
      * @param array  $userLogins
-     * @param string $cursor the page
+     * @param string $cursor     the page
      *
      * @return array
      */
     public function getStreams(array $userLogins, $cursor = null)
     {
         try {
-            $data = $this->api->getStreamsApi()->getStreams($userLogins, [], [], [], [], 100, null, $cursor);
+            $data = $this->api->getStreamsApi()->getStreams($userLogins, array(), array(), array(), array(), 100, null, $cursor);
+
             return json_decode($data, true);
         } catch (GuzzleException $e) {
-            return [];
+            return array();
         }
     }
 
     /**
-     * Retrieve data for the given game
+     * Retrieve data for the given game.
      *
-     * @param integer $gameId the game id to retrieve data from
+     * @param int $gameId the game id to retrieve data from
      *
      * @return array
      */
     public function getGame($gameId)
     {
         try {
-            $data = $this->api->getGamesApi()->getGames([$gameId]);
+            $data = $this->api->getGamesApi()->getGames(array($gameId));
             $arrayData = json_decode($data, true);
-            if (!isset($arrayData["data"]) || count($arrayData["data"]) === 0) {
-                return [];
+            if (!isset($arrayData['data']) || 0 === count($arrayData['data'])) {
+                return array();
             }
-            return $arrayData["data"][0];
+
+            return $arrayData['data'][0];
         } catch (GuzzleException $e) {
-            return [];
+            return array();
         }
     }
 
-
     /**
-     * Retrieve streams from the given user_login
+     * Retrieve streams from the given user_login.
      *
      * @param array  $userLogins
-     * @param string $cursor the page
+     * @param string $cursor     the page
      *
      * @return array
      */
     public function getUsers(array $userLogins)
     {
-
         try {
-            $data = $this->api->getUsersApi()->getUsers($userLogins, [], false, null);
+            $data = $this->api->getUsersApi()->getUsers($userLogins, array(), false, null);
+
             return json_decode($data, true);
         } catch (GuzzleException $e) {
-            return [];
+            return array();
         }
     }
 

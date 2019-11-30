@@ -1,19 +1,22 @@
 <?php
 
-namespace Darkanakin41\StreamBundle\Entity;
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
+
+namespace Darkanakin41\StreamBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Stream
+ * Stream.
+ *
  * @ORM\MappedSuperclass()
  */
-class Stream
+abstract class Stream
 {
     /**
      * @var int
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
@@ -78,18 +81,21 @@ class Stream
     private $tags;
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(name="highlighted", type="boolean")
      */
     private $highlighted;
 
     /**
-     * @var StreamCategory*
-     * @ORM\ManyToOne(targetEntity=Darkanakin41\StreamBundle\Entity\StreamCategory")
+     * @var StreamCategory
+     * @ORM\ManyToOne(targetEntity=Darkanakin41\StreamBundle\Model\StreamCategory")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true)
      */
     private $category;
-
+    /**
+     * @var \DateTime
+     */
+    private $updated;
 
     /**
      * Get id.
@@ -340,11 +346,6 @@ class Stream
     {
         return $this->category;
     }
-    /**
-     * @var \DateTime
-     */
-    private $updated;
-
 
     /**
      * Set updated.
@@ -380,11 +381,13 @@ class Stream
 
     /**
      * @param string|null $logo
+     *
      * @return Stream
      */
     public function setLogo(?string $logo): Stream
     {
         $this->logo = $logo;
+
         return $this;
     }
 
@@ -398,11 +401,13 @@ class Stream
 
     /**
      * @param bool $highlighted
+     *
      * @return Stream
      */
     public function setHighlighted(bool $highlighted): Stream
     {
         $this->highlighted = $highlighted;
+
         return $this;
     }
 }

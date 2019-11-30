@@ -1,10 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
+
 namespace Darkanakin41\StreamBundle\Service;
 
-
-use Darkanakin41\StreamBundle\Entity\Stream;
-use Darkanakin41\StreamBundle\Entity\StreamCategory;
+use Darkanakin41\StreamBundle\Model\Stream;
+use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
@@ -15,7 +18,6 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class StreamService
 {
-
     /**
      * @var ManagerRegistry
      */
@@ -33,12 +35,13 @@ class StreamService
     }
 
     /**
-     * Retrieve streams from the category
+     * Retrieve streams from the category.
      *
      * @param StreamCategory $streamCategory
      * @param string         $provider
      *
      * @return integer
+     *
      * @throws Exception
      */
     public function getFromGame(StreamCategory $streamCategory, $provider)
@@ -49,33 +52,19 @@ class StreamService
     }
 
     /**
-     * Retrieve the requester from the providers
-     *
-     * @param string $provider
-     *
-     * @return AbstractRequester
-     * @throws Exception
-     */
-    private function getRequester($provider)
-    {
-        $classname = sprintf('Darkanakin41\\StreamBundle\\Requester\\%sRequester', ucfirst(strtolower($provider)));
-        if (!class_exists($classname)) throw new Exception('unhandled_provider');
-        return new $classname($this->registry, $this->streamExtension);
-    }
-
-    /**
-     * Create a stream based on his name and URL
+     * Create a stream based on his name and URL.
      *
      * @param string $url
      * @param string $name
      * @param bool   $highlighted
      *
      * @return bool true if created, false if not
+     *
      * @throws Exception
      */
     public function create($url, $name, $highlighted = false)
     {
-        if ($url === null) {
+        if (null === $url) {
             return false;
         }
         $stream = new Stream();
@@ -85,27 +74,27 @@ class StreamService
         $stream->setPlatform(StreamTool::getProvider($url));
         $stream->setStatus(StatusNomenclature::OFFLINE);
         $stream->setUpdated(new DateTime());
-        $stream->setTags([]);
+        $stream->setTags(array());
 
         $exist = $this->registry->getRepository(Stream::class)->findOneBy(array(
             'identifier' => $stream->getIdentifier(),
             'platform' => $stream->getPlatform(),
         ));
 
-        if ($exist !== null) {
+        if (null !== $exist) {
             return false;
         }
 
         $this->registry->getManager()->persist($stream);
         $this->registry->getManager()->flush();
 
-        $this->refresh([$stream], $stream->getPlatform());
+        $this->refresh(array($stream), $stream->getPlatform());
 
         return true;
     }
 
     /**
-     * Update streams
+     * Update streams.
      *
      * @param Stream[] $streams
      * @param string   $platform
@@ -117,5 +106,24 @@ class StreamService
         $requester = $this->getRequester($platform);
 
         $requester->refresh($streams);
+    }
+
+    /**
+     * Retrieve the requester from the providers.
+     *
+     * @param string $provider
+     *
+     * @return AbstractRequester
+     *
+     * @throws Exception
+     */
+    private function getRequester($provider)
+    {
+        $classname = sprintf('Darkanakin41\\StreamBundle\\Requester\\%sRequester', ucfirst(strtolower($provider)));
+        if (!class_exists($classname)) {
+            throw new Exception('unhandled_provider');
+        }
+
+        return new $classname($this->registry, $this->streamExtension);
     }
 }

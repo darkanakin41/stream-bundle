@@ -1,13 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
 
 namespace Darkanakin41\StreamBundle\Event;
 
-
-use DateTime;
-use Darkanakin41\StreamBundle\Entity\Stream;
+use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Service\StreamService;
+use DateTime;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -48,9 +50,9 @@ class IsLiveSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
-            IsLiveEvent::NAME => "isLiveHandler",
-        ];
+        return array(
+            IsLiveEvent::NAME => 'isLiveHandler',
+        );
     }
 
     public function isLiveHandler(IsLiveEvent $event)
@@ -60,7 +62,7 @@ class IsLiveSubscriber implements EventSubscriberInterface
             'platform' => $event->getPlatform(),
         ));
 
-        if ($stream === null) {
+        if (null === $stream) {
             $stream = new Stream();
             $stream->setName($event->getName());
             $stream->setLogo($event->getLogo());
@@ -69,12 +71,12 @@ class IsLiveSubscriber implements EventSubscriberInterface
             $stream->setStatus(StatusNomenclature::ONLINE);
             $stream->setUpdated(new DateTime());
             $stream->setHighlighted(false);
-            $stream->setTags([]);
+            $stream->setTags(array());
 
             $this->registry->getManager()->persist($stream);
             $this->registry->getManager()->flush();
         }
 
-        $this->streamService->refresh([$stream], $stream->getPlatform());
+        $this->streamService->refresh(array($stream), $stream->getPlatform());
     }
 }

@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
+
 namespace Darkanakin41\StreamBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 class IsLiveEvent extends Event
 {
-
     public const NAME = 'darkanakin41.stream.islive';
 
     /**
@@ -96,5 +99,4 @@ class IsLiveEvent extends Event
     {
         $this->logo = $logo;
     }
-
 }

@@ -1,14 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
+
 namespace Darkanakin41\StreamBundle\Extension;
 
-
-use Darkanakin41\MediaBundle\Entity\File;
-use Darkanakin41\StreamBundle\Entity\Stream;
-use Darkanakin41\StreamBundle\Nomenclature\ProviderNomenclature;
+use Darkanakin41\StreamBundle\Model\Stream;
+use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class StreamExtension extends \Twig_Extension
+class StreamExtension extends AbstractExtension
 {
     const TWITCH = '<div id="stream-%s" data-stream="%s" data-width="%d" data-height="%d"></div>';
     const TWITCH_CHAT = '<iframe src="//www.twitch.tv/embed/%s/chat" frameborder="0" scrolling="no" width="%s" height="%s"></iframe>';
@@ -38,54 +42,53 @@ class StreamExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('darkanakin41_stream_render_live', [$this, 'renderLive'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('darkanakin41_stream_render_chat', [$this, 'renderChat'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('darkanakin41_stream_language', [$this, 'language']),
-            new \Twig_SimpleFunction('darkanakin41_stream_have_chat', [$this, 'haveChat']),
-            new \Twig_SimpleFunction('darkanakin41_stream_preview', [$this, 'preview']),
+            new TwigFunction('darkanakin41_stream_render_live', [$this, 'renderLive'], ['is_safe' => ['html']]),
+            new TwigFunction('darkanakin41_stream_render_chat', [$this, 'renderChat'], ['is_safe' => ['html']]),
+            new TwigFunction('darkanakin41_stream_language', [$this, 'language']),
+            new TwigFunction('darkanakin41_stream_have_chat', [$this, 'haveChat']),
+            new TwigFunction('darkanakin41_stream_preview', [$this, 'preview']),
         );
     }
 
     /**
-     * Get the HTML code to display the stream
+     * Get the HTML code to display the stream.
      *
      * @param Stream $stream
-     * @param int $width
-     * @param int $height
+     * @param int    $width
+     * @param int    $height
      *
      * @return string
      */
     public function renderLive(Stream $stream, $width = 620, $height = 380)
     {
         switch ($stream->getPlatform()) {
-            case ProviderNomenclature::TWITCH :
+            case PlatformNomenclature::TWITCH:
                 return sprintf(self::TWITCH, $stream->getIdentifier(), $stream->getIdentifier(), $width, $height);
-            case ProviderNomenclature::YOUTUBE :
+            case PlatformNomenclature::YOUTUBE:
                 return sprintf(self::YOUTUBE, $stream->getIdentifier(), $width, $height);
         }
     }
 
-
     /**
-     * Get the HTML code to render the chat
+     * Get the HTML code to render the chat.
      *
      * @param Stream $stream
-     * @param int $width
-     * @param int $height
+     * @param int    $width
+     * @param int    $height
      *
      * @return string
      */
     public function renderChat(Stream $stream, $width = 340, $height = 380)
     {
         switch ($stream->getPlatform()) {
-            case ProviderNomenclature::TWITCH :
+            case PlatformNomenclature::TWITCH:
                 printf(self::TWITCH_CHAT, $stream->getIdentifier(), $width, $height);
                 break;
         }
     }
 
     /**
-     * Check if the stream have chat
+     * Check if the stream have chat.
      *
      * @param Stream $stream
      *
@@ -94,14 +97,15 @@ class StreamExtension extends \Twig_Extension
     public function haveChat(Stream $stream)
     {
         switch ($stream->getPlatform()) {
-            case ProviderNomenclature::TWITCH :
+            case PlatformNomenclature::TWITCH:
                 return true;
         }
+
         return false;
     }
 
     /**
-     * Get the lang of the stream
+     * Get the lang of the stream.
      *
      * @param Stream $stream
      *
@@ -110,29 +114,28 @@ class StreamExtension extends \Twig_Extension
     public function language(Stream $stream)
     {
         switch ($stream->getLanguage()) {
-            default :
+            default:
                 return strtolower($stream->getLanguage());
-            case "en" :
-                return "gb";
-            case "ko" :
-                return "kr";
-            case "zh" :
-                return "cn";
+            case 'en':
+                return 'gb';
+            case 'ko':
+                return 'kr';
+            case 'zh':
+                return 'cn';
         }
     }
 
     /**
-     * Get the lang of the stream
+     * Get the lang of the stream.
      *
      * @param Stream $stream
-     * @param int $width
-     * @param int $height
+     * @param int    $width
+     * @param int    $height
      *
      * @return string
      */
     public function preview(Stream $stream, $width = 620, $height = 380)
     {
-        return str_ireplace(['{width}','{height}'], [$width, $height], $stream->getPreview());
+        return str_ireplace(array('{width}', '{height}'), array($width, $height), $stream->getPreview());
     }
-
 }

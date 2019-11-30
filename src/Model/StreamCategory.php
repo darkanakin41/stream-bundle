@@ -1,19 +1,22 @@
 <?php
 
-namespace Darkanakin41\StreamBundle\Entity;
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
+
+namespace Darkanakin41\StreamBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * StreamCategory
+ * StreamCategory.
+ *
  * @ORM\MappedSuperclass()
  */
-class StreamCategory
+abstract class StreamCategory
 {
     /**
      * @var int
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
@@ -40,7 +43,6 @@ class StreamCategory
      * @ORM\Column(name="highlighted", type="boolean")
      */
     private $displayed;
-
 
     /**
      * Get id.
