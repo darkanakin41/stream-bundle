@@ -22,6 +22,6 @@ return PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
     ->setFinder(
         PhpCsFixer\Finder::create()
-            ->in(__DIR__)
+            ->in(__DIR__ . "/src")
     )
     ;

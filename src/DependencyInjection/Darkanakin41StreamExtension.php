@@ -20,16 +20,15 @@ class Darkanakin41StreamExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
-
         $processor = new Processor();
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        if(!class_exists($config['stream_class'])){
-            throw new InvalidConfigurationException("Please provide a valid stream_class value in configuration");
+        if (!class_exists($config['stream_class'])) {
+            throw new InvalidConfigurationException('Please provide a valid stream_class value in configuration');
         }
-        if(!class_exists($config['category_class'])){
-            throw new InvalidConfigurationException("Please provide a valid stream_class value in configuration");
+        if (!class_exists($config['category_class'])) {
+            throw new InvalidConfigurationException('Please provide a valid stream_class value in configuration');
         }
 
         $container->setParameter('darkanakin41.stream.config', $config);

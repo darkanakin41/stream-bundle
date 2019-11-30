@@ -13,7 +13,7 @@ class StreamTool
     public static function getIdentifiant($url)
     {
         if (strpos($url, 'twitch')) {
-            $url = str_replace(['/profile', '/videos'], '', $url);
+            $url = str_replace(array('/profile', '/videos'), '', $url);
             $step1 = implode('', array_slice(explode('/', $url), -1));
             $step2_explode = explode('?', $step1);
 

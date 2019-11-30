@@ -22,9 +22,6 @@ abstract class AbstractEndpoint
 
     abstract protected function initialize();
 
-    /**
-     * @return ParameterBag
-     */
     protected function getParameterBag(): ParameterBag
     {
         return $this->parameterBag;

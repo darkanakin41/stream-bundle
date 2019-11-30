@@ -43,6 +43,7 @@ abstract class AbstractRequester
     public function createStreamObject()
     {
         $class = $this->streamClass;
+
         return new $class();
     }
 
@@ -52,13 +53,12 @@ abstract class AbstractRequester
     public function createStreamCategoryObject()
     {
         $class = $this->streamCategoryClass;
+
         return new $class();
     }
 
     /**
      * Retrieve streams for the given $category.
-     *
-     * @param StreamCategory $category
      *
      * @return int Number of stream created
      */

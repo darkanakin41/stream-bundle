@@ -326,8 +326,6 @@ abstract class Stream
     /**
      * Set category.
      *
-     * @param StreamCategory|null $category
-     *
      * @return Stream
      */
     public function setCategory(StreamCategory $category = null)
@@ -371,19 +369,11 @@ abstract class Stream
         return $this->updated;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLogo(): ?string
     {
         return $this->logo;
     }
 
-    /**
-     * @param string|null $logo
-     *
-     * @return Stream
-     */
     public function setLogo(?string $logo): Stream
     {
         $this->logo = $logo;
@@ -391,19 +381,11 @@ abstract class Stream
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isHighlighted(): bool
     {
         return $this->highlighted;
     }
 
-    /**
-     * @param bool $highlighted
-     *
-     * @return Stream
-     */
     public function setHighlighted(bool $highlighted): Stream
     {
         $this->highlighted = $highlighted;

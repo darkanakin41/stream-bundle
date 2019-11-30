@@ -1,8 +1,10 @@
 <?php
 
+/*
+ * This file is part of the Darkanakin41StreamBundle package.
+ */
 
 namespace Darkanakin41\StreamBundle\DependencyInjection;
-
 
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -10,13 +12,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-
         $treeBuilder = new TreeBuilder('darkanakin41_stream');
         if (method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
             $rootNode = $treeBuilder->root('darkanakin41_stream');
         }
 
-        $supportedPlatforms = [PlatformNomenclature::YOUTUBE, PlatformNomenclature::TWITCH];
+        $supportedPlatforms = array(PlatformNomenclature::YOUTUBE, PlatformNomenclature::TWITCH);
 
         $rootNode
             ->children()

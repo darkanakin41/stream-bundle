@@ -42,20 +42,19 @@ class StreamExtension extends AbstractExtension
     public function getFunctions()
     {
         return array(
-            new TwigFunction('darkanakin41_stream_render_live', [$this, 'renderLive'], ['is_safe' => ['html']]),
-            new TwigFunction('darkanakin41_stream_render_chat', [$this, 'renderChat'], ['is_safe' => ['html']]),
-            new TwigFunction('darkanakin41_stream_language', [$this, 'language']),
-            new TwigFunction('darkanakin41_stream_have_chat', [$this, 'haveChat']),
-            new TwigFunction('darkanakin41_stream_preview', [$this, 'preview']),
+            new TwigFunction('darkanakin41_stream_render_live', array($this, 'renderLive'), array('is_safe' => array('html'))),
+            new TwigFunction('darkanakin41_stream_render_chat', array($this, 'renderChat'), array('is_safe' => array('html'))),
+            new TwigFunction('darkanakin41_stream_language', array($this, 'language')),
+            new TwigFunction('darkanakin41_stream_have_chat', array($this, 'haveChat')),
+            new TwigFunction('darkanakin41_stream_preview', array($this, 'preview')),
         );
     }
 
     /**
      * Get the HTML code to display the stream.
      *
-     * @param Stream $stream
-     * @param int    $width
-     * @param int    $height
+     * @param int $width
+     * @param int $height
      *
      * @return string
      */
@@ -72,9 +71,8 @@ class StreamExtension extends AbstractExtension
     /**
      * Get the HTML code to render the chat.
      *
-     * @param Stream $stream
-     * @param int    $width
-     * @param int    $height
+     * @param int $width
+     * @param int $height
      *
      * @return string
      */
@@ -90,9 +88,7 @@ class StreamExtension extends AbstractExtension
     /**
      * Check if the stream have chat.
      *
-     * @param Stream $stream
-     *
-     * @return boolean
+     * @return bool
      */
     public function haveChat(Stream $stream)
     {
@@ -106,8 +102,6 @@ class StreamExtension extends AbstractExtension
 
     /**
      * Get the lang of the stream.
-     *
-     * @param Stream $stream
      *
      * @return string
      */
@@ -128,9 +122,8 @@ class StreamExtension extends AbstractExtension
     /**
      * Get the lang of the stream.
      *
-     * @param Stream $stream
-     * @param int    $width
-     * @param int    $height
+     * @param int $width
+     * @param int $height
      *
      * @return string
      */

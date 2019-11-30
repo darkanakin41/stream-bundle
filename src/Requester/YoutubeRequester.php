@@ -80,8 +80,7 @@ class YoutubeRequester extends AbstractRequester
     /**
      * Update data of the stream based on retrieved informations.
      *
-     * @param Stream $stream
-     * @param array  $data
+     * @param array $data
      *
      * @throws Exception
      */

@@ -7,9 +7,9 @@
 namespace Darkanakin41\StreamBundle\Requester;
 
 use Darkanakin41\StreamBundle\Endpoint\TwitchEndpoint;
+use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
-use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Exception;
@@ -111,7 +111,6 @@ class TwitchRequester extends AbstractRequester
      * Create stream.
      *
      * @param StreamCategory $category
-     * @param array          $streamData
      *
      * @return int 1 if created, 0 if not
      *
@@ -141,9 +140,7 @@ class TwitchRequester extends AbstractRequester
     /**
      * Update stream with given data.
      *
-     * @param Stream         $stream
      * @param StreamCategory $streamCategory
-     * @param array          $streamData
      *
      * @return void 1 if created, 0 if not
      *

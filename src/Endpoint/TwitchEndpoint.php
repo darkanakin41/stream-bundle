@@ -42,8 +42,7 @@ class TwitchEndpoint extends AbstractEndpoint
     /**
      * Retrieve streams from the given user_login.
      *
-     * @param array  $userLogins
-     * @param string $cursor     the page
+     * @param string $cursor the page
      *
      * @return array
      */
@@ -83,8 +82,7 @@ class TwitchEndpoint extends AbstractEndpoint
     /**
      * Retrieve streams from the given user_login.
      *
-     * @param array  $userLogins
-     * @param string $cursor     the page
+     * @param string $cursor the page
      *
      * @return array
      */

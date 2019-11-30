@@ -6,9 +6,9 @@
 
 namespace Darkanakin41\StreamBundle\Service;
 
+use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
-use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
 use Darkanakin41\StreamBundle\Tool\StreamTool;
@@ -37,10 +37,9 @@ class StreamService
     /**
      * Retrieve streams from the category.
      *
-     * @param StreamCategory $streamCategory
-     * @param string         $provider
+     * @param string $provider
      *
-     * @return integer
+     * @return int
      *
      * @throws Exception
      */
