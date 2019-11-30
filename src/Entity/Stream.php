@@ -2,73 +2,91 @@
 
 namespace Darkanakin41\StreamBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Stream
+ * @ORM\MappedSuperclass()
  */
 class Stream
 {
     /**
      * @var int
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
+     * @ORM\Column(name="name", type="integer")
      */
     private $name;
 
     /**
      * @var string
+     * @ORM\Column(name="platform", type="string")
      */
     private $platform;
 
     /**
      * @var string
+     * @ORM\Column(name="identifier", type="string")
      */
     private $identifier;
 
     /**
      * @var string|null
+     * @ORM\Column(name="title", type="string", nullable=true)
      */
     private $title;
 
     /**
      * @var string
+     * @ORM\Column(name="status", type="string")
      */
     private $status;
 
     /**
      * @var string|null
+     * @ORM\Column(name="language", type="string", nullable=true)
      */
     private $language;
 
     /**
      * @var int|null
+     * @ORM\Column(name="viewers", type="integer", nullable=true)
      */
     private $viewers;
 
     /**
      * @var string|null
+     * @ORM\Column(name="logo", type="string", nullable=true)
      */
     private $logo;
 
     /**
      * @var string|null
+     * @ORM\Column(name="preview", type="string", nullable=true)
      */
     private $preview;
 
     /**
      * @var array
+     * @ORM\Column(name="tags", type="array")
      */
     private $tags;
 
     /**
      * @var boolean
+     * @ORM\Column(name="highlighted", type="boolean")
      */
     private $highlighted;
 
     /**
-     * @var \Darkanakin41\StreamBundle\Entity\StreamCategory
+     * @var StreamCategory*
+     * @ORM\ManyToOne(targetEntity=Darkanakin41\StreamBundle\Entity\StreamCategory")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true)
      */
     private $category;
 
@@ -302,11 +320,11 @@ class Stream
     /**
      * Set category.
      *
-     * @param \Darkanakin41\StreamBundle\Entity\StreamCategory|null $category
+     * @param StreamCategory|null $category
      *
      * @return Stream
      */
-    public function setCategory(\Darkanakin41\StreamBundle\Entity\StreamCategory $category = null)
+    public function setCategory(StreamCategory $category = null)
     {
         $this->category = $category;
 
@@ -316,7 +334,7 @@ class Stream
     /**
      * Get category.
      *
-     * @return \Darkanakin41\StreamBundle\Entity\StreamCategory|null
+     * @return StreamCategory|null
      */
     public function getCategory()
     {

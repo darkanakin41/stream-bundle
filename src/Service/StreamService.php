@@ -5,30 +5,38 @@ namespace Darkanakin41\StreamBundle\Service;
 
 use Darkanakin41\StreamBundle\Entity\Stream;
 use Darkanakin41\StreamBundle\Entity\StreamCategory;
+use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
 use Darkanakin41\StreamBundle\Tool\StreamTool;
 use DateTime;
 use Exception;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class StreamService
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+
+    /**
+     * @var StreamExtension
+     */
+    private $streamExtension;
+
+    public function __construct(ManagerRegistry $registryManager, StreamExtension $streamExtension)
     {
-        $this->container = $container;
+        $this->registry = $registryManager;
+        $this->streamExtension = $streamExtension;
     }
 
     /**
      * Retrieve streams from the category
      *
      * @param StreamCategory $streamCategory
-     * @param                $provider
+     * @param string         $provider
      *
      * @return integer
      * @throws Exception
@@ -37,9 +45,7 @@ class StreamService
     {
         $requester = $this->getRequester($provider);
 
-        $streams = $requester->updateFromCategory($streamCategory);
-
-        return $streams;
+        return $requester->updateFromCategory($streamCategory);
     }
 
     /**
@@ -54,8 +60,7 @@ class StreamService
     {
         $classname = sprintf('Darkanakin41\\StreamBundle\\Requester\\%sRequester', ucfirst(strtolower($provider)));
         if (!class_exists($classname)) throw new Exception('unhandled_provider');
-        $object = new $classname($this->container->get('doctrine'), $this->container->get('darkanakin41.api'), $this->container->get('darkanakin41.stream.twig'));
-        return $object;
+        return new $classname($this->registry, $this->streamExtension);
     }
 
     /**
@@ -82,7 +87,7 @@ class StreamService
         $stream->setUpdated(new DateTime());
         $stream->setTags([]);
 
-        $exist = $this->container->get("doctrine")->getRepository(Stream::class)->findOneBy(array(
+        $exist = $this->registry->getRepository(Stream::class)->findOneBy(array(
             'identifier' => $stream->getIdentifier(),
             'platform' => $stream->getPlatform(),
         ));
@@ -91,8 +96,8 @@ class StreamService
             return false;
         }
 
-        $this->container->get("doctrine")->getManager()->persist($stream);
-        $this->container->get("doctrine")->getManager()->flush();
+        $this->registry->getManager()->persist($stream);
+        $this->registry->getManager()->flush();
 
         $this->refresh([$stream], $stream->getPlatform());
 

@@ -2,30 +2,37 @@
 
 namespace Darkanakin41\StreamBundle\Requester;
 
-
-use Darkanakin41\ApiBundle\EndPoint\Twitch\GamesEndPoint;
-use Darkanakin41\ApiBundle\EndPoint\Twitch\StreamEndPoint;
-use Darkanakin41\ApiBundle\EndPoint\Twitch\UserEndPoint;
-use Darkanakin41\ApiBundle\Nomenclature\ClientNomenclature;
-use Darkanakin41\ApiBundle\Nomenclature\EndPointNomenclature;
+use Darkanakin41\StreamBundle\Endpoint\TwitchEndpoint;
 use Darkanakin41\StreamBundle\Entity\Stream;
 use Darkanakin41\StreamBundle\Entity\StreamCategory;
+use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Nomenclature\ProviderNomenclature;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
+use Exception;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class TwitchRequester extends AbstractRequester
 {
     const MAX_PAGE = 10;
 
     /**
+     * @var TwitchEndpoint
+     */
+    private $twitchEndpoint;
+
+    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, TwitchEndpoint $twitchEndpoint)
+    {
+        parent::__construct($registry, $streamExtension);
+        $this->twitchEndpoint = $twitchEndpoint;
+    }
+
+
+    /**
      * {@inheritdoc}
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateFromCategory(StreamCategory $category)
     {
-        /** @var StreamEndPoint $endpoint */
-        $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::STREAM);
-
         $streams = 0;
         $streamsId = [];
 
@@ -34,7 +41,7 @@ class TwitchRequester extends AbstractRequester
 
             $cursor = null;
             for ($i = 0; $i < self::MAX_PAGE; $i++) {
-                $data = $endpoint->getGameStreams($value, $cursor);
+                $data = $this->twitchEndpoint->getGameStreams($value, $cursor);
                 if (isset($data['data'])) {
                     foreach ($data['data'] as $streamData) {
                         $streams += $this->createStream($streamData, $category);
@@ -61,7 +68,7 @@ class TwitchRequester extends AbstractRequester
      * @param array          $streamData
      *
      * @return int 1 if created, 0 if not
-     * @throws \Exception
+     * @throws Exception
      */
     private function createStream(array $streamData, StreamCategory $category = null)
     {
@@ -92,7 +99,7 @@ class TwitchRequester extends AbstractRequester
      *
      * @return void 1 if created, 0 if not
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function updateStream(Stream $stream, array $streamData = [], StreamCategory $streamCategory = null)
     {
@@ -131,9 +138,7 @@ class TwitchRequester extends AbstractRequester
             if (!$categoryUpdated) {
                 $category = $this->registry->getRepository(StreamCategory::class)->findByKey($stream->getPlatform(), $streamData['game_id']);
                 if ($category === null && $streamData['game_id'] != 0) {
-                    /** @var GamesEndPoint $endpoint */
-                    $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::GAMES);
-                    $data = $endpoint->getData($streamData['game_id']);
+                    $data = $this->twitchEndpoint->getGame($streamData['game_id']);
                     $category = new StreamCategory();
                     $category->setRefresh(false);
                     $category->setDisplayed(false);
@@ -144,20 +149,17 @@ class TwitchRequester extends AbstractRequester
                 }
                 $stream->setCategory($category);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             dump($data);
         }
     }
 
     /**
      * {@inheritdoc}
-     * @throws \Exception
+     * @throws Exception
      */
     public function refresh(array $streams)
     {
-        /** @var StreamEndPoint $endpoint */
-        $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::STREAM);
-
         $streamsId = [];
         foreach ($streams as $stream) {
             $streamsId[] = $stream->getIdentifier();
@@ -167,7 +169,7 @@ class TwitchRequester extends AbstractRequester
         $cursor = null;
         $empty = false;
         while (!$empty) {
-            $data = $endpoint->getStreams($streamsId, $cursor);
+            $data = $this->twitchEndpoint->getStreams($streamsId, $cursor);
             if (isset($data['data'])) {
                 $empty = count($data['data']) === 0;
                 foreach ($data['data'] as $streamData) {
@@ -187,17 +189,14 @@ class TwitchRequester extends AbstractRequester
     /**
      * @param string[] $streamsId
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function updateAvatars(array $streamsId)
     {
-        /** @var UserEndPoint $endpoint */
-        $endpoint = $this->apiService->getEndPoint(ClientNomenclature::TWITCH, EndPointNomenclature::USER);
-
         $i = 0;
 
         while (!empty(array_slice($streamsId, self::MAX_PAGE * $i, self::MAX_PAGE))) {
-            $data = $endpoint->getUsers(array_slice($streamsId, self::MAX_PAGE * $i, self::MAX_PAGE));
+            $data = $this->twitchEndpoint->getUsers(array_slice($streamsId, self::MAX_PAGE * $i, self::MAX_PAGE));
             if (isset($data['data'])) {
                 foreach ($data['data'] as $streamData) {
                     $stream = $this->registry->getRepository(Stream::class)->findOneBy(['identifier' => $streamData['login']]);

@@ -2,33 +2,42 @@
 
 namespace Darkanakin41\StreamBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * StreamCategory
+ * @ORM\MappedSuperclass()
  */
 class StreamCategory
 {
     /**
      * @var int
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
+     * @ORM\Column(name="title", type="string", nullable=true)
      */
     private $title;
 
     /**
      * @var array
+     * @ORM\Column(name="tags", type="array")
      */
     private $platformKeys;
 
     /**
      * @var bool
+     * @ORM\Column(name="highlighted", type="boolean")
      */
     private $refresh;
 
     /**
      * @var bool
+     * @ORM\Column(name="highlighted", type="boolean")
      */
     private $displayed;
 

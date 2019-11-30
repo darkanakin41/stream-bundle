@@ -19,7 +19,8 @@
   "require": {
     "php": "^7",
     "darkanakin41/core-bundle": "dev-master",
-    "darkanakin41/api-bundle": "dev-master",
+    "google/apiclient": "^2.0",
+    "nicklaw5/twitch-api-php": "^2.1",
     "symfony/framework-bundle": "*",
     "symfony/orm-pack": "*",
     "symfony/validator": "*",
