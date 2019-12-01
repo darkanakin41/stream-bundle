@@ -6,7 +6,6 @@
 
 namespace Darkanakin41\StreamBundle\DependencyInjection;
 
-use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
