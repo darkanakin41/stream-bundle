@@ -24,8 +24,6 @@ class Configuration implements ConfigurationInterface
             $rootNode = $treeBuilder->root('darkanakin41_stream');
         }
 
-        $supportedPlatforms = array(PlatformNomenclature::YOUTUBE, PlatformNomenclature::TWITCH);
-
         $rootNode
             ->children()
             ->scalarNode('stream_class')->isRequired()->cannotBeEmpty()->end()
