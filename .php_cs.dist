@@ -18,7 +18,7 @@ return PhpCsFixer\Config::create()
         'php_unit_strict' => true,
         'phpdoc_no_empty_return' => false,
     ])
-    ->setUsingCache(true)
+    ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->setFinder(
         PhpCsFixer\Finder::create()
