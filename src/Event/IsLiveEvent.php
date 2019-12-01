@@ -6,11 +6,11 @@
 
 namespace Darkanakin41\StreamBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class IsLiveEvent extends Event
 {
-    public const NAME = 'darkanakin41.stream.islive';
+    const NAME = 'darkanakin41.stream.islive';
 
     /**
      * @var string

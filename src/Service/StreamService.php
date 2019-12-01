@@ -66,7 +66,10 @@ class StreamService
         if (null === $url) {
             return false;
         }
-        $stream = new Stream();
+
+        $requester = $this->getRequester(StreamTool::getProvider($url));
+
+        $stream = $requester->createStreamObject();
         $stream->setIdentifier(StreamTool::getIdentifiant($url));
         $stream->setName($name);
         $stream->setHighlighted($highlighted);
@@ -116,7 +119,7 @@ class StreamService
      *
      * @throws Exception
      */
-    private function getRequester($provider)
+    public function getRequester($provider)
     {
         $classname = sprintf('Darkanakin41\\StreamBundle\\Requester\\%sRequester', ucfirst(strtolower($provider)));
         if (!class_exists($classname)) {

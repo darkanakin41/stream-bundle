@@ -8,8 +8,10 @@ namespace Darkanakin41\StreamBundle\Event;
 
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
+use Darkanakin41\StreamBundle\Requester\AbstractRequester;
 use Darkanakin41\StreamBundle\Service\StreamService;
 use DateTime;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -24,7 +26,7 @@ class IsLiveSubscriber implements EventSubscriberInterface
      */
     private $registry;
 
-    public function __construct(RegistryInterface $registry, StreamService $streamService)
+    public function __construct(ManagerRegistry $registry, StreamService $streamService)
     {
         $this->streamService = $streamService;
         $this->registry = $registry;
@@ -63,7 +65,9 @@ class IsLiveSubscriber implements EventSubscriberInterface
         ));
 
         if (null === $stream) {
-            $stream = new Stream();
+            /** @var AbstractRequester $requester */
+            $requester = $this->streamService->getRequester($event->getPlatform());
+            $stream = $requester->createStreamObject();
             $stream->setName($event->getName());
             $stream->setLogo($event->getLogo());
             $stream->setIdentifier($event->getIdentifier());
