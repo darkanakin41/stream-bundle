@@ -10,6 +10,7 @@ use Darkanakin41\CoreBundle\Nomenclature\AbstractNomenclature;
 
 class PlatformNomenclature extends AbstractNomenclature
 {
+    const OTHER = 'other';
     const TWITCH = 'twitch';
     const YOUTUBE = 'youtube';
 }

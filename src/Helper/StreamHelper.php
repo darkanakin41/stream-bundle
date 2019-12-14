@@ -4,11 +4,11 @@
  * This file is part of the Darkanakin41StreamBundle package.
  */
 
-namespace Darkanakin41\StreamBundle\Tool;
+namespace Darkanakin41\StreamBundle\Helper;
 
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 
-class StreamTool
+class StreamHelper
 {
     public static function getIdentifiant($url)
     {
@@ -39,6 +39,6 @@ class StreamTool
             return PlatformNomenclature::YOUTUBE;
         }
 
-        return 'OTHER';
+        return PlatformNomenclature::OTHER;
     }
 }

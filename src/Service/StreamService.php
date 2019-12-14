@@ -7,11 +7,11 @@
 namespace Darkanakin41\StreamBundle\Service;
 
 use Darkanakin41\StreamBundle\Extension\StreamExtension;
+use Darkanakin41\StreamBundle\Helper\StreamHelper;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
-use Darkanakin41\StreamBundle\Tool\StreamTool;
 use DateTime;
 use Exception;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -67,13 +67,13 @@ class StreamService
             return false;
         }
 
-        $requester = $this->getRequester(StreamTool::getProvider($url));
+        $requester = $this->getRequester(StreamHelper::getProvider($url));
 
         $stream = $requester->createStreamObject();
-        $stream->setIdentifier(StreamTool::getIdentifiant($url));
+        $stream->setIdentifier(StreamHelper::getIdentifiant($url));
         $stream->setName($name);
         $stream->setHighlighted($highlighted);
-        $stream->setPlatform(StreamTool::getProvider($url));
+        $stream->setPlatform(StreamHelper::getProvider($url));
         $stream->setStatus(StatusNomenclature::OFFLINE);
         $stream->setUpdated(new DateTime());
         $stream->setTags(array());

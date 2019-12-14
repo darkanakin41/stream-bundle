@@ -14,6 +14,7 @@ class PlatformNomenclatureTest extends TestCase
     public function testGetAllConstants()
     {
         $this->assertSame([
+            'OTHER' => 'other',
             'TWITCH' => 'twitch',
             'YOUTUBE' => 'youtube'
         ], PlatformNomenclature::getAllConstants());

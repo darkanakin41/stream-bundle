@@ -28,7 +28,7 @@ class Darkanakin41StreamExtension extends Extension
             throw new InvalidConfigurationException('Please provide a valid stream_class value in configuration');
         }
         if (!class_exists($config['category_class'])) {
-            throw new InvalidConfigurationException('Please provide a valid stream_class value in configuration');
+            throw new InvalidConfigurationException('Please provide a valid category_class value in configuration');
         }
 
         $container->setParameter('darkanakin41.stream.config', $config);

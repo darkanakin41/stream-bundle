@@ -6,6 +6,7 @@
 
 namespace Darkanakin41\StreamBundle\Model;
 
+use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,7 +23,7 @@ abstract class Stream
 
     /**
      * @var string
-     * @ORM\Column(name="name", type="integer")
+     * @ORM\Column(name="name", type="string")
      */
     private $name;
 
@@ -88,7 +89,7 @@ abstract class Stream
 
     /**
      * @var StreamCategory
-     * @ORM\ManyToOne(targetEntity=Darkanakin41\StreamBundle\Model\StreamCategory")
+     * @ORM\ManyToOne(targetEntity="Darkanakin41\StreamBundle\Model\StreamCategory")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true)
      */
     private $category;
@@ -96,6 +97,13 @@ abstract class Stream
      * @var \DateTime
      */
     private $updated;
+
+    public function __construct()
+    {
+        $this->status = StatusNomenclature::OFFLINE;
+        $this->tags = array();
+        $this->highlighted = false;
+    }
 
     /**
      * Get id.

@@ -34,4 +34,4 @@ bin\console darkanakin41:stream:refresh
 ## TODO 
 * Add more streams platform in the process
 * Handle errors from providers (mainly quota)
-* Add more unit tests
+* Add more unit tests (too light right now)

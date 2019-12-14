@@ -4,31 +4,3 @@ services:
     public: true
     class: Darkanakin41\StreamBundle\Event\IsLiveSubscriber
     tags: ['kernel.event_subscriber']
-
-  Darkanakin41\StreamBundle\Service\StreamService:
-    public: true
-    class: Darkanakin41\StreamBundle\Service\StreamService
-    arguments: ["@service_container"]
-
-  darkanakin41.stream:
-    public: true
-    alias: Darkanakin41\StreamBundle\Service\StreamService
-
-  darkanakin41.stream.twig:
-    public: true
-    class: Darkanakin41\StreamBundle\Extension\StreamExtension
-    arguments: ["@service_container"]
-    tags:
-      - { name: twig.extension }
-
-  darkanakin41.stream.command.retrieve:
-    public: true
-    class: Darkanakin41\StreamBundle\Command\RetrieveCommand
-    tags:
-      - { name: console.command }
-      -
-  darkanakin41.stream.command.refresh:
-    public: true
-    class: Darkanakin41\StreamBundle\Command\RefreshCommand
-    tags:
-      - { name: console.command }

@@ -44,6 +44,13 @@ abstract class StreamCategory
      */
     private $displayed;
 
+    public function __construct()
+    {
+        $this->refresh = false;
+        $this->displayed = false;
+        $this->platformKeys = array();
+    }
+
     /**
      * Get id.
      *
@@ -121,7 +128,7 @@ abstract class StreamCategory
      *
      * @return bool
      */
-    public function getRefresh()
+    public function isRefresh()
     {
         return $this->refresh;
     }
@@ -145,7 +152,7 @@ abstract class StreamCategory
      *
      * @return bool
      */
-    public function getDisplayed()
+    public function isDisplayed()
     {
         return $this->displayed;
     }

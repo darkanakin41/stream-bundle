@@ -19,7 +19,6 @@
   "require": {
     "php": "^7",
     "darkanakin41/core-bundle": "dev-master",
-    "doctrine/data-fixtures": "^1.4",
     "google/apiclient": "^2.0",
     "nicklaw5/twitch-api-php": "^2.1",
     "symfony/framework-bundle": "*",
@@ -28,6 +27,7 @@
     "symfony/yaml": "*"
   },
   "require-dev": {
+    "doctrine/data-fixtures": "^1.4",
     "friendsofphp/php-cs-fixer": "^2.14",
     "phpunit/phpunit": "^8.4"
   },
@@ -41,7 +41,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Darkanakin41\\StreamBundle\\Tests\\": "tests/"
+      "Darkanakin41\\StreamBundle\\Tests\\": "tests/",
+      "Darkanakin41\\CoreBundle\\Tests\\": "vendor/darkanakin41/core-bundle/tests/"
     }
   }
 }
