@@ -30,6 +30,7 @@ class StreamTest extends AbstractEntityTestCase
             ['identifier', 'toto'],
             ['title', 'toto'],
             ['language', 'toto'],
+            ['preview', 'toto'],
             ['logo', 'toto'],
             ['viewers', 123],
             ['updated', new \DateTime()],
