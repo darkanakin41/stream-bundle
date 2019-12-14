@@ -50,6 +50,7 @@ class RetrieveCommand extends Command
             '',
         ));
 
+        /** @var StreamCategory[] $categories */
         $categories = $this->managerRegistry->getRepository(StreamCategory::class)->findBy(array('refresh' => true));
 
         $created = 0;
