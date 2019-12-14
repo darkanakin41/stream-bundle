@@ -20,6 +20,9 @@ class StreamTest extends AbstractEntityTestCase
         return $this->getMockForAbstractClass(Stream::class);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function nullableFieldProvider()
     {
         return [
@@ -34,6 +37,9 @@ class StreamTest extends AbstractEntityTestCase
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function defaultValueProvider()
     {
         return [
@@ -54,6 +60,14 @@ class StreamTest extends AbstractEntityTestCase
 
         $this->assertNotNull($entity->getCategory());
         $this->assertEquals($category->getTitle(), $entity->getCategory()->getTitle());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function notNullableFieldProvider()
+    {
+        return [];
     }
 
     /**

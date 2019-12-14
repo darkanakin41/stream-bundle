@@ -9,14 +9,19 @@ use Darkanakin41\StreamBundle\Model\StreamCategory;
 
 class StreamCategoryTest extends AbstractEntityTestCase
 {
-
+    /**
+     * @inheritDoc
+     */
     public function nullableFieldProvider()
     {
         return [
             ['title', 'toto'],
         ];
     }
-
+    
+    /**
+     * @inheritDoc
+     */
     public function defaultValueProvider()
     {
         return [
@@ -24,6 +29,14 @@ class StreamCategoryTest extends AbstractEntityTestCase
             ['displayed', false, true],
             ['platformKeys', [], ['toto' => 'titi']],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function notNullableFieldProvider()
+    {
+        return [];
     }
 
     /**
