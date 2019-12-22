@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('stream_class')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('video_class')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('category_class')->isRequired()->cannotBeEmpty()->end()
             ->arrayNode('platform')
                 ->children()
