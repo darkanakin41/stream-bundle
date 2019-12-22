@@ -16,11 +16,11 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('darkanakin41_video');
+        $treeBuilder = new TreeBuilder('darkanakin41_stream');
         if (method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
         } else {
-            $rootNode = $treeBuilder->root('darkanakin41_video');
+            $rootNode = $treeBuilder->root('darkanakin41_stream');
         }
 
         $rootNode
