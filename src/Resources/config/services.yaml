@@ -1,18 +1,18 @@
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-    public: true
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
 
-  Darkanakin41\StreamBundle\:
-    resource: '../../{Extension, Endpoint, Requester, Service}'
+    Darkanakin41\StreamBundle\:
+        resource: '../../{Extension, Endpoint, Requester, Service}'
 
-  Darkanakin41\StreamBundle\Service\StreamService:
-    autowire: true
-    public: true
+    Darkanakin41\StreamBundle\Service\StreamService:
+        autowire: true
+        public: true
 
-  Darkanakin41\StreamBundle\Event\IsLiveSubscriber:
-    autowire: true
-    public: true
-    class: Darkanakin41\StreamBundle\Event\IsLiveSubscriber
-    tags: ['kernel.event_subscriber']
+    Darkanakin41\StreamBundle\Event\IsLiveSubscriber:
+        autowire: true
+        public: true
+        class: Darkanakin41\StreamBundle\Event\IsLiveSubscriber
+        tags: ['kernel.event_subscriber']
