@@ -95,6 +95,7 @@ abstract class Stream
     private $category;
     /**
      * @var \DateTime
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
      */
     private $updated;
 
