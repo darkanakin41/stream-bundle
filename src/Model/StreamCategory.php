@@ -34,13 +34,13 @@ abstract class StreamCategory
 
     /**
      * @var bool
-     * @ORM\Column(name="highlighted", type="boolean")
+     * @ORM\Column(name="refresh", type="boolean")
      */
     private $refresh;
 
     /**
      * @var bool
-     * @ORM\Column(name="highlighted", type="boolean")
+     * @ORM\Column(name="displayed", type="boolean")
      */
     private $displayed;
 
