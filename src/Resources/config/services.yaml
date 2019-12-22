@@ -1,4 +1,9 @@
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
   Darkanakin41\StreamBundle\Event\IsLiveSubscriber:
     autowire: true
     public: true
