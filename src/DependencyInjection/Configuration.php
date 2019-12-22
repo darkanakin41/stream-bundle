@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
             ->children()
             ->scalarNode('stream_class')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('category_class')->isRequired()->cannotBeEmpty()->end()
-            ->scalarNode('platform')
+            ->arrayNode('platform')
                 ->arrayPrototype()
                     ->children()
                         ->integerNode('api_key')->isRequired()->cannotBeEmpty()->end()
