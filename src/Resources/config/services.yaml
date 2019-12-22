@@ -2,7 +2,14 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
-    public: false
+    public: true
+
+  Darkanakin41\StreamBundle\:
+    resource: '../../{Extension, Endpoint, Requester, Service}'
+
+  Darkanakin41\StreamBundle\Service\StreamService:
+    autowire: true
+    public: true
 
   Darkanakin41\StreamBundle\Event\IsLiveSubscriber:
     autowire: true
