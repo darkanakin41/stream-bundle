@@ -9,7 +9,7 @@ namespace Darkanakin41\StreamBundle\Command;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Service\StreamService;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;

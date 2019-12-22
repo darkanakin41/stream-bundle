@@ -13,7 +13,7 @@ use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Exception;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class TwitchRequester extends AbstractRequester

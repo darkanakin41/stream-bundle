@@ -14,7 +14,7 @@ use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
 use DateTime;
 use Exception;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 class StreamService
 {

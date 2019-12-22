@@ -11,8 +11,7 @@ use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
 use Darkanakin41\StreamBundle\Service\StreamService;
 use DateTime;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class IsLiveSubscriber implements EventSubscriberInterface
@@ -22,7 +21,7 @@ class IsLiveSubscriber implements EventSubscriberInterface
      */
     private $streamService;
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $registry;
 

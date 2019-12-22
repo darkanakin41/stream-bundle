@@ -9,7 +9,7 @@ namespace Darkanakin41\StreamBundle\Requester;
 use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 abstract class AbstractRequester

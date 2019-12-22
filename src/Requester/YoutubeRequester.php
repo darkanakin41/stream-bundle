@@ -13,7 +13,7 @@ use Darkanakin41\StreamBundle\Model\StreamCategory;
 use DateTime;
 use Exception;
 use Google_Service_YouTube_Video;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class YoutubeRequester extends AbstractRequester
