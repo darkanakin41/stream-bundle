@@ -7,14 +7,14 @@
 namespace Darkanakin41\StreamBundle\Requester;
 
 use Darkanakin41\StreamBundle\Endpoint\TwitchEndpoint;
-use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
-use Exception;
+use Darkanakin41\StreamBundle\Twig\StreamExtension;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Exception;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class TwitchRequester extends AbstractRequester
 {
@@ -25,9 +25,9 @@ class TwitchRequester extends AbstractRequester
      */
     private $twitchEndpoint;
 
-    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ContainerBuilder $containerBuilder, TwitchEndpoint $twitchEndpoint)
+    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ParameterBagInterface $parameterBag, TwitchEndpoint $twitchEndpoint)
     {
-        parent::__construct($registry, $streamExtension, $containerBuilder);
+        parent::__construct($registry, $streamExtension, $parameterBag);
         $this->twitchEndpoint = $twitchEndpoint;
     }
 
@@ -97,7 +97,7 @@ class TwitchRequester extends AbstractRequester
             // TODO Create exception
 
             $this->registry->getManager()->flush();
-            if (isset($data['pagination']) && isset($data['pagination']['cursor'])) {
+            if (isset($data['pagination']) && isset($data['pagination']['cursor']) && $data['pagination']['cursor'] !== $cursor) {
                 $cursor = $data['pagination']['cursor'];
             } else {
                 break;
@@ -118,7 +118,7 @@ class TwitchRequester extends AbstractRequester
      */
     private function createStream(array $streamData, StreamCategory $category = null)
     {
-        $stream = $this->registry->getRepository(Stream::class)->findOneBy(array('identifier' => strtolower($streamData['user_name'])));
+        $stream = $this->registry->getRepository($this->getStreamClass())->findOneBy(array('identifier' => strtolower($streamData['user_name'])));
         $created = 0;
         if (null === $stream) {
             $stream = $this->createStreamObject();
@@ -186,7 +186,7 @@ class TwitchRequester extends AbstractRequester
 
         try {
             if (!$categoryUpdated) {
-                $category = $this->registry->getRepository(StreamCategory::class)->findByKey($stream->getPlatform(), $streamData['game_id']);
+                $category = $this->registry->getRepository($this->getStreamCategoryClass())->findByKey($stream->getPlatform(), $streamData['game_id']);
                 if (null === $category && 0 != $streamData['game_id']) {
                     $data = $this->twitchEndpoint->getGame($streamData['game_id']);
                     $category = $this->createStreamCategoryObject();
@@ -200,7 +200,6 @@ class TwitchRequester extends AbstractRequester
                 $stream->setCategory($category);
             }
         } catch (Exception $e) {
-            dump($data);
         }
     }
 
@@ -217,7 +216,7 @@ class TwitchRequester extends AbstractRequester
             $data = $this->twitchEndpoint->getUsers(array_slice($streamsId, self::MAX_PAGE * $i, self::MAX_PAGE));
             if (isset($data['data'])) {
                 foreach ($data['data'] as $streamData) {
-                    $stream = $this->registry->getRepository(Stream::class)->findOneBy(array('identifier' => $streamData['login']));
+                    $stream = $this->registry->getRepository($this->getStreamClass())->findOneBy(array('identifier' => $streamData['login']));
                     $stream->setLogo($streamData['profile_image_url']);
                     $this->registry->getManager()->persist($stream);
                 }

@@ -6,23 +6,24 @@
 
 namespace Darkanakin41\StreamBundle\Endpoint;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 abstract class AbstractEndpoint
 {
     /**
-     * @var ParameterBag
+     * @var ParameterBagInterface
      */
     private $parameterBag;
 
-    public function __construct(ParameterBag $parameterBag)
+    public function __construct(ParameterBagInterface $parameterBag)
     {
         $this->parameterBag = $parameterBag;
+        $this->initialize();
     }
 
     abstract protected function initialize();
 
-    protected function getParameterBag(): ParameterBag
+    protected function getParameterBag(): ParameterBagInterface
     {
         return $this->parameterBag;
     }

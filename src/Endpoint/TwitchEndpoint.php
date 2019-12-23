@@ -33,7 +33,7 @@ class TwitchEndpoint extends AbstractEndpoint
         try {
             $data = $this->api->getStreamsApi()->getStreams(array(), array(), array($identifier), array(), array(), 100, null, $cursor);
 
-            return json_decode($data, true);
+            return json_decode($data->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             return array();
         }
@@ -49,9 +49,9 @@ class TwitchEndpoint extends AbstractEndpoint
     public function getStreams(array $userLogins, $cursor = null)
     {
         try {
-            $data = $this->api->getStreamsApi()->getStreams($userLogins, array(), array(), array(), array(), 100, null, $cursor);
+            $data = $this->api->getStreamsApi()->getStreams(array(), $userLogins, array(), array(), array(), 100, null, $cursor);
 
-            return json_decode($data, true);
+            return json_decode($data->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             return array();
         }
@@ -68,7 +68,7 @@ class TwitchEndpoint extends AbstractEndpoint
     {
         try {
             $data = $this->api->getGamesApi()->getGames(array($gameId));
-            $arrayData = json_decode($data, true);
+            $arrayData = json_decode($data->getBody()->getContents(), true);
             if (!isset($arrayData['data']) || 0 === count($arrayData['data'])) {
                 return array();
             }
@@ -91,7 +91,7 @@ class TwitchEndpoint extends AbstractEndpoint
         try {
             $data = $this->api->getUsersApi()->getUsers($userLogins, array(), false, null);
 
-            return json_decode($data, true);
+            return json_decode($data->getBody()->getContents(), true);
         } catch (GuzzleException $e) {
             return array();
         }
@@ -99,8 +99,9 @@ class TwitchEndpoint extends AbstractEndpoint
 
     protected function initialize()
     {
-        $clientId = $this->getParameterBag()->get('darkanakin41.stream.twitch.clientId');
-        $clientSecret = $this->getParameterBag()->get('darkanakin41.stream.twitch.clientSecret');
+        $config = $this->getParameterBag()->get('darkanakin41.stream.config');
+        $clientId = $config['platform']['twitch']['client_id'];
+        $clientSecret = $config['platform']['twitch']['client_secret'];
         $this->client = new HelixGuzzleClient($clientId);
 
         $this->api = new NewTwitchApi($this->client, $clientId, $clientSecret);

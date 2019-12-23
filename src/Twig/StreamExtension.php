@@ -4,7 +4,7 @@
  * This file is part of the Darkanakin41StreamBundle package.
  */
 
-namespace Darkanakin41\StreamBundle\Extension;
+namespace Darkanakin41\StreamBundle\Twig;
 
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;

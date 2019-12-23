@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                 ->children()
                     ->arrayNode('google')
                         ->children()
-                            ->scalarNode('application_key')->isRequired()->cannotBeEmpty()->end()
+                            ->scalarNode('developper_key')->isRequired()->cannotBeEmpty()->end()
                             ->scalarNode('referer')->isRequired()->cannotBeEmpty()->end()
                         ->end()
                     ->end()

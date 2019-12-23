@@ -5,14 +5,31 @@ services:
         public: true
 
     Darkanakin41\StreamBundle\:
-        resource: '../../{Extension, Endpoint, Requester, Service}'
-
-    Darkanakin41\StreamBundle\Service\StreamService:
-        autowire: true
-        public: true
+        resource: '../../{Endpoint, Requester, Service, Twig}'
 
     Darkanakin41\StreamBundle\Event\IsLiveSubscriber:
         autowire: true
         public: true
         class: Darkanakin41\StreamBundle\Event\IsLiveSubscriber
         tags: ['kernel.event_subscriber']
+
+    Darkanakin41\StreamBundle\Command\:
+        autowire: true
+        public: true
+        resource: '../../Command'
+        tags: ['console.command']
+
+    Darkanakin41\StreamBundle\Requester\:
+        autowire: true
+        public: true
+        resource: '../../Requester'
+
+    Darkanakin41\StreamBundle\Twig\:
+        autowire: true
+        public: true
+        resource: '../../Twig'
+        tags: ['twig.extension']
+
+    Darkanakin41\StreamBundle\Service\StreamService:
+        autowire: true
+        public: true

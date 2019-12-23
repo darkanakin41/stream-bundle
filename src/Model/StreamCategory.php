@@ -17,8 +17,9 @@ abstract class StreamCategory
 {
     /**
      * @var int
-     * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
@@ -31,7 +32,7 @@ abstract class StreamCategory
 
     /**
      * @var array
-     * @ORM\Column(name="tags", type="array")
+     * @ORM\Column(name="platform_keys", type="array")
      */
     private $platformKeys;
 

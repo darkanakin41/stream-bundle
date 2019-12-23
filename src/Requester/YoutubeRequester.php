@@ -7,14 +7,14 @@
 namespace Darkanakin41\StreamBundle\Requester;
 
 use Darkanakin41\StreamBundle\Endpoint\YoutubeEndpoint;
-use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
+use Darkanakin41\StreamBundle\Twig\StreamExtension;
 use DateTime;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 use Google_Service_YouTube_Video;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class YoutubeRequester extends AbstractRequester
 {
@@ -24,9 +24,9 @@ class YoutubeRequester extends AbstractRequester
      */
     private $youtubeEndpoint;
 
-    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ContainerBuilder $containerBuilder, YoutubeEndpoint $youtubeEndpoint)
+    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ParameterBagInterface $parameterBag, YoutubeEndpoint $youtubeEndpoint)
     {
-        parent::__construct($registry, $streamExtension, $containerBuilder);
+        parent::__construct($registry, $streamExtension, $parameterBag);
         $this->youtubeEndpoint = $youtubeEndpoint;
     }
 

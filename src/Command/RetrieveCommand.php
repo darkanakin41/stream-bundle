@@ -14,6 +14,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RetrieveCommand extends Command
 {
@@ -29,11 +30,17 @@ class RetrieveCommand extends Command
      */
     private $streamService;
 
-    public function __construct(ManagerRegistry $managerRegistry, StreamService $streamService, string $name = null)
+    /**
+     * @var array
+     */
+    private $config;
+
+    public function __construct(ManagerRegistry $managerRegistry, StreamService $streamService, ParameterBagInterface $parameterBag, string $name = null)
     {
         parent::__construct($name);
         $this->managerRegistry = $managerRegistry;
         $this->streamService = $streamService;
+        $this->config = $parameterBag->get('darkanakin41.stream.config');
     }
 
     protected function configure()
@@ -50,8 +57,9 @@ class RetrieveCommand extends Command
             '',
         ));
 
+        var_dump($this->config['category_class']);
         /** @var StreamCategory[] $categories */
-        $categories = $this->managerRegistry->getRepository(StreamCategory::class)->findBy(array('refresh' => true));
+        $categories = $this->managerRegistry->getRepository($this->config['category_class'])->findBy(array('refresh' => true));
 
         $created = 0;
 
@@ -75,7 +83,7 @@ class RetrieveCommand extends Command
                 }
             }
 
-            $progressBar->setMessage(sprintf('(Streams créés : %d)', $created));
+            $progressBar->setMessage(sprintf('(Streams created : %d)', $created));
             $progressBar->advance();
         }
         $progressBar->finish();

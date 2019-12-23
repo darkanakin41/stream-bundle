@@ -6,15 +6,16 @@
 
 namespace Darkanakin41\StreamBundle\Service;
 
-use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Helper\StreamHelper;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\AbstractRequester;
+use Darkanakin41\StreamBundle\Twig\StreamExtension;
 use DateTime;
-use Exception;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Exception;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class StreamService
 {
@@ -28,10 +29,14 @@ class StreamService
      */
     private $streamExtension;
 
-    public function __construct(ManagerRegistry $registryManager, StreamExtension $streamExtension)
+    /** @var ContainerInterface */
+    private $container;
+
+    public function __construct(ContainerInterface $container, ManagerRegistry $registryManager, StreamExtension $streamExtension)
     {
         $this->registry = $registryManager;
         $this->streamExtension = $streamExtension;
+        $this->container = $container;
     }
 
     /**
@@ -126,6 +131,6 @@ class StreamService
             throw new Exception('unhandled_provider');
         }
 
-        return new $classname($this->registry, $this->streamExtension);
+        return $this->container->get($classname);
     }
 }

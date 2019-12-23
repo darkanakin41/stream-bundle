@@ -36,7 +36,8 @@ class YoutubeEndpoint extends AbstractEndpoint
 
     protected function initialize()
     {
-        $developperKey = $this->getParameterBag()->get('darkanakin41.stream.google.developperKey');
+        $config = $this->getParameterBag()->get('darkanakin41.stream.config');
+        $developperKey = $config['platform']['google']['developper_key'];
         $this->client = new Google_Client();
         $this->client->setDeveloperKey($developperKey);
     }

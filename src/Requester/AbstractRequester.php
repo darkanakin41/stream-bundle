@@ -6,11 +6,11 @@
 
 namespace Darkanakin41\StreamBundle\Requester;
 
-use Darkanakin41\StreamBundle\Extension\StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
+use Darkanakin41\StreamBundle\Twig\StreamExtension;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 abstract class AbstractRequester
 {
@@ -27,12 +27,12 @@ abstract class AbstractRequester
     /** @var string */
     private $streamClass;
 
-    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ContainerBuilder $containerBuilder)
+    public function __construct(ManagerRegistry $registry, StreamExtension $streamExtension, ParameterBagInterface $parameterBag)
     {
         $this->registry = $registry;
         $this->streamExtension = $streamExtension;
 
-        $configuration = $containerBuilder->get('darkanakin41.stream.config');
+        $configuration = $parameterBag->get('darkanakin41.stream.config');
         $this->streamClass = $configuration['stream_class'];
         $this->streamCategoryClass = $configuration['category_class'];
     }
@@ -42,7 +42,7 @@ abstract class AbstractRequester
      */
     public function createStreamObject()
     {
-        $class = $this->streamClass;
+        $class = $this->getStreamClass();
 
         return new $class();
     }
@@ -52,9 +52,19 @@ abstract class AbstractRequester
      */
     public function createStreamCategoryObject()
     {
-        $class = $this->streamCategoryClass;
+        $class = $this->getStreamCategoryClass();
 
         return new $class();
+    }
+
+    public function getStreamCategoryClass(): string
+    {
+        return $this->streamCategoryClass;
+    }
+
+    public function getStreamClass(): string
+    {
+        return $this->streamClass;
     }
 
     /**

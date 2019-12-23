@@ -6,15 +6,14 @@
 
 namespace Darkanakin41\StreamBundle\Command;
 
-use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Service\StreamService;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RefreshCommand extends Command
 {
@@ -32,11 +31,17 @@ class RefreshCommand extends Command
      */
     private $streamService;
 
-    public function __construct(ManagerRegistry $managerRegistry, StreamService $streamService, string $name = null)
+    /**
+     * @var array
+     */
+    private $config;
+
+    public function __construct(ManagerRegistry $managerRegistry, StreamService $streamService, ParameterBagInterface $parameterBag, string $name = null)
     {
         parent::__construct($name);
         $this->managerRegistry = $managerRegistry;
         $this->streamService = $streamService;
+        $this->config = $parameterBag->get('darkanakin41.stream.config');
     }
 
     protected function configure()
@@ -61,10 +66,10 @@ class RefreshCommand extends Command
             $progressBar->setMessage(ucfirst($provider));
             $progressBar->display();
             for ($i = 0; $i < self::NB_ITERATION; ++$i) {
-                $streams = $this->managerRegistry->getRepository(Stream::class)->findBy(array('platform' => $provider), array('updated' => 'ASC'), 100);
+                $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(array('platform' => $provider), array('updated' => 'ASC'), 100);
                 try {
                     $this->streamService->refresh($streams, $provider);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                 }
                 $progressBar->advance();
             }

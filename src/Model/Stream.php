@@ -89,13 +89,6 @@ abstract class Stream
      * @ORM\Column(name="highlighted", type="boolean")
      */
     private $highlighted;
-
-    /**
-     * @var StreamCategory
-     * @ORM\ManyToOne(targetEntity="Darkanakin41\StreamBundle\Model\StreamCategory")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true)
-     */
-    private $category;
     /**
      * @var \DateTime
      * @ORM\Column(name="updated", type="datetime", nullable=true)
@@ -120,6 +113,16 @@ abstract class Stream
     }
 
     /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Set name.
      *
      * @param string $name
@@ -134,13 +137,13 @@ abstract class Stream
     }
 
     /**
-     * Get name.
+     * Get platform.
      *
      * @return string
      */
-    public function getName()
+    public function getPlatform()
     {
-        return $this->name;
+        return $this->platform;
     }
 
     /**
@@ -158,13 +161,13 @@ abstract class Stream
     }
 
     /**
-     * Get platform.
+     * Get identifier.
      *
      * @return string
      */
-    public function getPlatform()
+    public function getIdentifier()
     {
-        return $this->platform;
+        return $this->identifier;
     }
 
     /**
@@ -182,13 +185,13 @@ abstract class Stream
     }
 
     /**
-     * Get identifier.
+     * Get title.
      *
-     * @return string
+     * @return string|null
      */
-    public function getIdentifier()
+    public function getTitle()
     {
-        return $this->identifier;
+        return $this->title;
     }
 
     /**
@@ -206,13 +209,13 @@ abstract class Stream
     }
 
     /**
-     * Get title.
+     * Get status.
      *
-     * @return string|null
+     * @return string
      */
-    public function getTitle()
+    public function getStatus()
     {
-        return $this->title;
+        return $this->status;
     }
 
     /**
@@ -230,13 +233,13 @@ abstract class Stream
     }
 
     /**
-     * Get status.
+     * Get language.
      *
-     * @return string
+     * @return string|null
      */
-    public function getStatus()
+    public function getLanguage()
     {
-        return $this->status;
+        return $this->language;
     }
 
     /**
@@ -254,13 +257,13 @@ abstract class Stream
     }
 
     /**
-     * Get language.
+     * Get viewers.
      *
-     * @return string|null
+     * @return int|null
      */
-    public function getLanguage()
+    public function getViewers()
     {
-        return $this->language;
+        return $this->viewers;
     }
 
     /**
@@ -278,13 +281,13 @@ abstract class Stream
     }
 
     /**
-     * Get viewers.
+     * Get preview.
      *
-     * @return int|null
+     * @return string|null
      */
-    public function getViewers()
+    public function getPreview()
     {
-        return $this->viewers;
+        return $this->preview;
     }
 
     /**
@@ -302,13 +305,13 @@ abstract class Stream
     }
 
     /**
-     * Get preview.
+     * Get tags.
      *
-     * @return string|null
+     * @return array
      */
-    public function getPreview()
+    public function getTags()
     {
-        return $this->preview;
+        return $this->tags;
     }
 
     /**
@@ -326,35 +329,27 @@ abstract class Stream
     }
 
     /**
-     * Get tags.
+     * Get category.
      *
-     * @return array
+     * @return StreamCategory|null
      */
-    public function getTags()
-    {
-        return $this->tags;
-    }
+    abstract public function getCategory();
 
     /**
      * Set category.
      *
      * @return Stream
      */
-    public function setCategory(StreamCategory $category = null)
-    {
-        $this->category = $category;
-
-        return $this;
-    }
+    abstract public function setCategory($category = null);
 
     /**
-     * Get category.
+     * Get updated.
      *
-     * @return StreamCategory|null
+     * @return \DateTime
      */
-    public function getCategory()
+    public function getUpdated()
     {
-        return $this->category;
+        return $this->updated;
     }
 
     /**
@@ -369,16 +364,6 @@ abstract class Stream
         $this->updated = $updated;
 
         return $this;
-    }
-
-    /**
-     * Get updated.
-     *
-     * @return \DateTime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
     }
 
     public function getLogo(): ?string
