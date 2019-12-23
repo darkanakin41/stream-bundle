@@ -50,32 +50,11 @@ class StreamTest extends AbstractEntityTestCase
         ];
     }
 
-    public function testChannel()
-    {
-        $entity = $this->getEntity();
-        $this->assertNull($entity->getCategory());
-
-        $category = $this->getCategory();
-        $category->setTitle("toto");
-        $entity->setCategory($category);
-
-        $this->assertNotNull($entity->getCategory());
-        $this->assertEquals($category->getTitle(), $entity->getCategory()->getTitle());
-    }
-
     /**
      * @inheritDoc
      */
     public function notNullableFieldProvider()
     {
         return [];
-    }
-
-    /**
-     * @return StreamCategory
-     */
-    protected function getCategory()
-    {
-        return $this->getMockForAbstractClass(StreamCategory::class);
     }
 }
