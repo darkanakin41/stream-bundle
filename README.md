@@ -1,6 +1,8 @@
 # darkanakin41/stream-bundle
 
 [![Actions Status](https://github.com/darkanakin41/stream-bundle/workflows/Quality/badge.svg)](https://github.com/darkanakin41/stream-bundle/actions)
+[![Total Downloads](https://poser.pugx.org/darkanakin41/stream-bundle/downloads.svg)](https://packagist.org/packages/darkanakin41/stream-bundle) 
+[![Latest Stable Version](https://poser.pugx.org/darkanakin41/stream-bundle/v/stable.svg)](https://packagist.org/packages/darkanakin41/stream-bundle)
 
 This is a bundle for Symfony 4 designed to store and provide a simple way to store streams from differents platforms, monitor them and automaticaly retrieve new ones.
 
