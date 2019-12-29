@@ -1,0 +1,10 @@
+darkanakin41_stream:
+    stream_class: "App\\Entity\\Stream"
+    category_class: "App\\Entity\\StreamCategory"
+    platform:
+        google:
+            developper_key: 'AIzaSyAuUhDWLgJxXSdALw_VcKkuyZ64gQ0F3hM'
+            referer: 'scoopturn.com'
+        twitch:
+            client_id: 'iq6qvbzzlpwjmx2biil3y0oyqm5vcr'
+            client_secret: 'cwdg7xqw32aeb23dd58gi2ywtetbhp'
