@@ -77,31 +77,32 @@ class UpgradeCommand extends Command
             $table->setHeaders(['Platform', 'Stream', 'Status']);
             foreach ($streams as $stream) {
                 $action = "";
-                try {
-                    if(empty($stream->getIdentifier())){
-                        $this->managerRegistry->getManager()->remove($stream);
-                        $action = '<error>Removed</error>';
-                    }
+                if (empty($stream->getIdentifier())) {
+                    $this->managerRegistry->getManager()->remove($stream);
+                    $action = '<error>Removed</error>';
+                } else {
+                    try {
 
-                    /** @var TwitchRequester $requester */
-                    $data = $requester->getUserData($stream->getIdentifier());
+                        /** @var TwitchRequester $requester */
+                        $data = $requester->getUserData($stream->getIdentifier());
 
-                    if (null === $data) {
-                        $this->managerRegistry->getManager()->remove($stream);
-                        $action = '<error>Removed</error>';
-                    } else {
-                        $stream->setUserId($data['id']);
-                        $stream->setIdentifier($data['login']);
-                        $this->managerRegistry->getManager()->persist($stream);
-                        $action = '<success>Upgraded</success>';
-                    }
-                } catch (\Exception $e) {
-                    if (false !== stripos($e->getMessage(), 'Invalid login names, emails or IDs in request')) {
-                        $this->managerRegistry->getManager()->remove($stream);
-                        $action = '<error>Removed</error>';
+                        if (null === $data) {
+                            $this->managerRegistry->getManager()->remove($stream);
+                            $action = '<error>Removed</error>';
+                        } else {
+                            $stream->setUserId($data['id']);
+                            $stream->setIdentifier($data['login']);
+                            $this->managerRegistry->getManager()->persist($stream);
+                            $action = '<success>Upgraded</success>';
+                        }
+                    } catch (\Exception $e) {
+                        if (false !== stripos($e->getMessage(), 'Invalid login names, emails or IDs in request')) {
+                            $this->managerRegistry->getManager()->remove($stream);
+                            $action = '<error>Removed</error>';
+                        }
                     }
                 }
-                if(!isset($synthesis[$action])){
+                if (!isset($synthesis[$action])) {
                     $synthesis[$action] = 0;
                 }
                 $synthesis[$action]++;
