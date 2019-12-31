@@ -17,32 +17,33 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class RefreshCommandTest
  * @package Darkanakin41\StreamBundle\Tests\Command
+ * @group debug
  */
-class RefreshCommandTest extends AbstractTestCase
+class UpgradeCommandTest extends AbstractTestCase
 {
 
     public function testExecute()
     {
         $stream1 = new Stream();
+        $stream1->setName('darkanakin41');
         $stream1->setTitle('Coucou');
-        $stream1->setStatus(StatusNomenclature::ONLINE);
-        $stream1->setViewers(123456);
-        $stream1->setIdentifier('darkanakin41');
-        $stream1->setName('Darkanakin41');
+        $stream1->setStatus(StatusNomenclature::OFFLINE);
         $stream1->setPlatform(PlatformNomenclature::TWITCH);
-        $stream1->setUserId("38721257");
+        $stream1->setIdentifier('darkanakin41');
 
-        // Minecraft
-        $stream2 = $this->getOnlineStream(27471);
-        $stream2->setCategory(null);
+        $stream2 = new Stream();
+        $stream2->setName('Unknown');
+        $stream2->setTitle('Coucou');
+        $stream2->setStatus(StatusNomenclature::OFFLINE);
+        $stream2->setPlatform(PlatformNomenclature::TWITCH);
+        $stream2->setIdentifier('aaaasdsqdfdsqfdsqdfs');
 
-        // Fortnite
-        $stream3 = $this->getOnlineStream(33214);
-        $stream3->setCategory(null);
-
-        // Factorio
-        $stream4 = $this->getOnlineStream(130942);
-        $stream4->setCategory(null);
+        $stream3 = new Stream();
+        $stream3->setName('Asiatique');
+        $stream3->setTitle('Coucou');
+        $stream3->setStatus(StatusNomenclature::OFFLINE);
+        $stream3->setPlatform(PlatformNomenclature::TWITCH);
+        $stream3->setIdentifier('__지노__');
 
         $application = new Application(static::$kernel);
         $application->setAutoExit(false);
@@ -50,29 +51,27 @@ class RefreshCommandTest extends AbstractTestCase
         $this->getDoctrine()->getManager()->persist($stream1);
         $this->getDoctrine()->getManager()->persist($stream2);
         $this->getDoctrine()->getManager()->persist($stream3);
-        $this->getDoctrine()->getManager()->persist($stream4);
         $this->getDoctrine()->getManager()->flush();
+
+        $id1 = $stream1->getId();
+        $id2 = $stream2->getId();
+        $id3 = $stream3->getId();
 
         $command = $application->find(UpgradeCommand::$defaultName);
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
-        /** @var Stream[] $streams */
-        $streams = $this->getDoctrine()->getRepository(Stream::class)->findAll();
-        foreach ($streams as $stream) {
-            $this->assertNotNull($stream->getUpdated());
-        }
-    }
+        /** @var Stream|null $s */
+        $s = $this->getDoctrine()->getRepository(Stream::class)->find($id1);
+        $this->assertNotNull($s);
+        $this->assertNotNull($s->getUserId());
 
-    private function getOnlineStream($categoryId){
-        /** @var TwitchRequester $requester */
-        $requester = self::$container->get(TwitchRequester::class);
+        /** @var Stream|null $s */
+        $s = $this->getDoctrine()->getRepository(Stream::class)->find($id2);
+        $this->assertNull($s);
 
-        $category = new StreamCategory();
-        $category->setTitle("Minecraft");
-        $category->setPlatformKeys(['twitch_0' => $categoryId]);
-
-        $result = $requester->updateFromCategory($category);
-        return reset($result);
+        /** @var Stream|null $s */
+        $s = $this->getDoctrine()->getRepository(Stream::class)->find($id3);
+        $this->assertNull($s);
     }
 }
