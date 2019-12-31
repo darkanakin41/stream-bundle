@@ -10,17 +10,24 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      #      - name: Validate composer.json and composer.lock
-      #        run: composer validate
-
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
       # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
       # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-      - name: Run Coding Style Control
-        run: make cs_dry_run
+      - name: Run Bundle Security Control
+        run: make security
+
+      - name: Run PHP Coding Style Control
+        run: make php_cs_dry_run
+
+      - name: Run Twig Coding Style Control
+        run: make twig_cs
 
       - name: Run Tests
+        env:
+          GOOGLE_APPLICATION_KEY: ${{ secrets.GoogleApplicationKey }}
+          TWITCH_CLIENT_ID: ${{ secrets.TwitchClientId }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TwitchClientSecret }}
         run: make test

@@ -23,20 +23,18 @@ class TwitchEndpoint extends AbstractEndpoint
     /**
      * Retrieve streams from the choosen category.
      *
-     * @param $identifier
-     * @param $cursor
+     * @param int $identifier
+     * @param     $cursor
      *
      * @return array
+     *
+     * @throws GuzzleException
      */
     public function getGameStreams($identifier, $cursor = null)
     {
-        try {
-            $data = $this->api->getStreamsApi()->getStreams(array(), array(), array($identifier), array(), array(), 100, null, $cursor);
+        $data = $this->api->getStreamsApi()->getStreams(array(), array(), array($identifier), array(), array(), 100, $cursor, null);
 
-            return json_decode($data->getBody()->getContents(), true);
-        } catch (GuzzleException $e) {
-            return array();
-        }
+        return json_decode($data->getBody()->getContents(), true);
     }
 
     /**
@@ -45,16 +43,14 @@ class TwitchEndpoint extends AbstractEndpoint
      * @param string $cursor the page
      *
      * @return array
+     *
+     * @throws GuzzleException
      */
-    public function getStreams(array $userLogins, $cursor = null)
+    public function getStreams(array $userIds, $cursor = null)
     {
-        try {
-            $data = $this->api->getStreamsApi()->getStreams(array(), $userLogins, array(), array(), array(), 100, null, $cursor);
+        $data = $this->api->getStreamsApi()->getStreams($userIds, array(), array(), array(), array(), 100, null, $cursor);
 
-            return json_decode($data->getBody()->getContents(), true);
-        } catch (GuzzleException $e) {
-            return array();
-        }
+        return json_decode($data->getBody()->getContents(), true);
     }
 
     /**
@@ -63,43 +59,56 @@ class TwitchEndpoint extends AbstractEndpoint
      * @param int $gameId the game id to retrieve data from
      *
      * @return array
+     *
+     * @throws GuzzleException
      */
     public function getGame($gameId)
     {
-        try {
-            $data = $this->api->getGamesApi()->getGames(array($gameId));
-            $arrayData = json_decode($data->getBody()->getContents(), true);
-            if (!isset($arrayData['data']) || 0 === count($arrayData['data'])) {
-                return array();
-            }
-
-            return $arrayData['data'][0];
-        } catch (GuzzleException $e) {
+        $data = $this->api->getGamesApi()->getGames(array($gameId));
+        $arrayData = json_decode($data->getBody()->getContents(), true);
+        if (!isset($arrayData['data']) || 0 === count($arrayData['data'])) {
             return array();
         }
+
+        return $arrayData['data'][0];
     }
 
     /**
      * Retrieve streams from the given user_login.
      *
-     * @param string $cursor the page
-     *
      * @return array
+     *
+     * @throws GuzzleException
      */
-    public function getUsers(array $userLogins)
+    public function getUsers(array $userIds)
     {
-        try {
-            $data = $this->api->getUsersApi()->getUsers($userLogins, array(), false, null);
+        $data = $this->api->getUsersApi()->getUsers($userIds, array(), false, null);
 
-            return json_decode($data->getBody()->getContents(), true);
-        } catch (GuzzleException $e) {
-            return array();
+        return json_decode($data->getBody()->getContents(), true);
+    }
+
+    /**
+     * Retrieve the user_id from username.
+     *
+     * @return array|null
+     *
+     * @throws GuzzleException
+     */
+    public function getUserDataFromUsername(string $userName)
+    {
+        $userData = null;
+        $rawData = $this->api->getUsersApi()->getUsers(array(), array($userName), false, null);
+        $data = json_decode($rawData->getBody()->getContents(), true);
+        if (isset($data['data']) && isset($data['data'][0])) {
+            $userData = $data['data'][0];
         }
+
+        return $userData;
     }
 
     protected function initialize()
     {
-        $config = $this->getParameterBag()->get('darkanakin41.stream.config');
+        $config = $this->getConfig();
         $clientId = $config['platform']['twitch']['client_id'];
         $clientSecret = $config['platform']['twitch']['client_secret'];
         $this->client = new HelixGuzzleClient($clientId);

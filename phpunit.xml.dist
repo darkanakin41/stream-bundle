@@ -18,6 +18,10 @@
         <whitelist>
             <directory>./src</directory>
             <exclude>
+                <file>./src/Darkanakin41StreamBundle.php</file>
+                <directory>./src/DependencyInjection</directory>
+                <directory>./src/Event</directory>
+                <directory>./src/Exception</directory>
                 <directory>./src/Resources</directory>
             </exclude>
         </whitelist>

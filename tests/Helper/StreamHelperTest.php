@@ -31,6 +31,6 @@ class StreamHelperTest extends TestCase
         $this->assertEquals('-L2JlFGkFXw', StreamHelper::getIdentifiant($youtube));
 
         $other = 'https://www.scoopturn.com/';
-        $this->assertEquals($other, StreamHelper::getIdentifiant($other));
+        $this->assertEquals(null, StreamHelper::getIdentifiant($other));
     }
 }

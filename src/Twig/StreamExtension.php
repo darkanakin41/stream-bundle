@@ -7,31 +7,36 @@
 namespace Darkanakin41\StreamBundle\Twig;
 
 use Darkanakin41\StreamBundle\Model\Stream;
-use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Throwable;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class StreamExtension extends AbstractExtension
 {
-    const TWITCH = '<div id="stream-%s" data-stream="%s" data-width="%d" data-height="%d"></div>';
-    const TWITCH_CHAT = '<iframe src="//www.twitch.tv/embed/%s/chat" frameborder="0" scrolling="no" width="%s" height="%s"></iframe>';
-
-    const YOUTUBE = '<iframe src="//www.youtube.com/embed/%s" id="live_embed_player_flash" allowfullscreen width="%d" height="%d" frameborder="0"></iframe>';
+    const LANGUAGE_MAPPING = array(
+        'en' => 'gb',
+        'ko' => 'kr',
+        'zh' => 'cn',
+    );
 
     /**
      * @var ContainerInterface
      */
     private $container;
     /**
-     * @var \Twig\Environment
+     * @var Environment
      */
     private $twig;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, Environment $twig)
     {
         $this->container = $container;
-        $this->twig = $container->get('twig');
+        $this->twig = $twig;
     }
 
     public function getFilters()
@@ -42,10 +47,10 @@ class StreamExtension extends AbstractExtension
     public function getFunctions()
     {
         return array(
-            new TwigFunction('darkanakin41_stream_render_live', array($this, 'renderLive'), array('is_safe' => array('html'))),
+            new TwigFunction('darkanakin41_stream_render_video', array($this, 'renderVideo'), array('is_safe' => array('html'))),
             new TwigFunction('darkanakin41_stream_render_chat', array($this, 'renderChat'), array('is_safe' => array('html'))),
             new TwigFunction('darkanakin41_stream_language', array($this, 'language')),
-            new TwigFunction('darkanakin41_stream_have_chat', array($this, 'haveChat')),
+            new TwigFunction('darkanakin41_stream_has_chat', array($this, 'hasChat')),
             new TwigFunction('darkanakin41_stream_preview', array($this, 'preview')),
         );
     }
@@ -53,48 +58,64 @@ class StreamExtension extends AbstractExtension
     /**
      * Get the HTML code to display the stream.
      *
-     * @param int $width
-     * @param int $height
-     *
      * @return string
+     *
+     * @throws Throwable
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function renderLive(Stream $stream, $width = 620, $height = 380)
+    public function renderVideo(Stream $stream, array $vars = array('width' => 620, 'height' => 380, 'volume' => '0'))
     {
-        switch ($stream->getPlatform()) {
-            case PlatformNomenclature::TWITCH:
-                return sprintf(self::TWITCH, $stream->getIdentifier(), $stream->getIdentifier(), $width, $height);
-            case PlatformNomenclature::YOUTUBE:
-                return sprintf(self::YOUTUBE, $stream->getIdentifier(), $width, $height);
+        try {
+            $vars['stream'] = $stream;
+            $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
+
+            return $template->renderBlock('stream', $vars);
+        } catch (LoaderError $e) {
         }
+
+        return '';
     }
 
     /**
      * Get the HTML code to render the chat.
      *
-     * @param int $width
-     * @param int $height
-     *
      * @return string
+     *
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Throwable
      */
-    public function renderChat(Stream $stream, $width = 340, $height = 380)
+    public function renderChat(Stream $stream, array $vars = array('width' => 340, 'height' => 380, 'volume' => '0'))
     {
-        switch ($stream->getPlatform()) {
-            case PlatformNomenclature::TWITCH:
-                printf(self::TWITCH_CHAT, $stream->getIdentifier(), $width, $height);
-                break;
+        try {
+            $vars['stream'] = $stream;
+            $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
+            if ($template->hasBlock('chat')) {
+                return $template->renderBlock('chat', $vars);
+            }
+        } catch (LoaderError $e) {
         }
+
+        return '';
     }
 
     /**
      * Check if the stream have chat.
      *
      * @return bool
+     *
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function haveChat(Stream $stream)
+    public function hasChat(Stream $stream)
     {
-        switch ($stream->getPlatform()) {
-            case PlatformNomenclature::TWITCH:
-                return true;
+        try {
+            $options['stream'] = $stream;
+            $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
+
+            return $template->hasBlock('chat');
+        } catch (LoaderError $e) {
         }
 
         return false;
@@ -107,16 +128,11 @@ class StreamExtension extends AbstractExtension
      */
     public function language(Stream $stream)
     {
-        switch ($stream->getLanguage()) {
-            default:
-                return strtolower($stream->getLanguage());
-            case 'en':
-                return 'gb';
-            case 'ko':
-                return 'kr';
-            case 'zh':
-                return 'cn';
+        if (isset(self::LANGUAGE_MAPPING[strtolower($stream->getLanguage())])) {
+            return self::LANGUAGE_MAPPING[strtolower($stream->getLanguage())];
         }
+
+        return strtolower($stream->getLanguage());
     }
 
     /**

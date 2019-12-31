@@ -27,7 +27,7 @@ class StreamHelper
             return $step3_explode[0];
         }
 
-        return $url;
+        return null;
     }
 
     public static function getProvider($url)

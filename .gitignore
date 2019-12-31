@@ -1,4 +1,5 @@
 .idea/
+.requests/
 coverage
 vendor
 composer.lock

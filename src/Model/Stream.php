@@ -43,6 +43,12 @@ abstract class Stream
     private $identifier;
 
     /**
+     * @var string
+     * @ORM\Column(name="stream_user_id", type="string", nullable=true)
+     */
+    private $userId;
+
+    /**
      * @var string|null
      * @ORM\Column(name="title", type="string", nullable=true)
      */
@@ -388,5 +394,21 @@ abstract class Stream
         $this->highlighted = $highlighted;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId(): ?string
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param string $userId
+     */
+    public function setUserId($userId): void
+    {
+        $this->userId = $userId;
     }
 }

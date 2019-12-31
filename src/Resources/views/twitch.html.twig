@@ -1,0 +1,7 @@
+{% block stream %}
+    <div data-stream="{'channel' : '{{ stream.identifier }}', 'width' : {{ width }}, 'height' : {{ height }}, 'autoplay' : true}" data-volume="{{ volume }}" id="stream-video-{{ stream.userId }}"></div>
+{% endblock stream %}
+
+{% block chat %}
+    <iframe frameborder="0" height="{{ height }}" scrolling="no" src="//www.twitch.tv/embed/{{ stream.identifier }}/chat" width="{{ width }}" id="stream-chat-{{ stream.userId }}"></iframe>
+{% endblock chat %}

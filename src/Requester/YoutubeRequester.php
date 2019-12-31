@@ -37,7 +37,7 @@ class YoutubeRequester extends AbstractRequester
      */
     public function updateFromCategory(StreamCategory $category)
     {
-        return 0;
+        return array();
     }
 
     /**
@@ -45,36 +45,41 @@ class YoutubeRequester extends AbstractRequester
      *
      * @throws Exception
      */
-    public function refresh(array $streams)
+    public function refresh(array $toProcess)
     {
+        $toRemove = array();
+        $toUpdate = array();
+
         $ids = array();
-        foreach ($streams as $stream) {
-            $ids[] = $stream->getIdentifier();
+        foreach ($toProcess as $video) {
+            $ids[] = $video->getIdentifier();
         }
 
         $data = $this->youtubeEndpoint->getVideosData($ids);
-        /** @var Google_Service_YouTube_Video[] $items */
-        $items = $data->getItems();
 
-        foreach ($streams as $stream) {
-            /** @var array $data ->getItems() */
-            $items = array_filter($items, function (Google_Service_YouTube_Video $item) use ($stream) {
-                return $item->getId() === $stream->getIdentifier();
-            });
+        if (0 === count($data->getItems())) {
+            return array('toUpdate' => $toUpdate, 'toRemove' => $toRemove);
+        }
 
-            $item = reset($items);
+        foreach ($toProcess as $video) {
+            $videoData = null;
+            /** @var \Google_Service_YouTube_Video $item */
+            foreach ($data->getItems() as $item) {
+                if ($item->getId() === $video->getIdentifier()) {
+                    $videoData = $item;
+                }
+            }
 
-            if (false === $item || null === $item->getSnippet() || 'live' !== $item->getSnippet()->getLiveBroadcastContent()) {
-                $this->registry->getManager()->remove($stream);
+            if (null === $videoData || empty($videoData->getSnippet())) {
+                $toRemove[] = $video;
                 continue;
             }
 
-            $this->updateStreamData($stream, $item);
-
-            $this->registry->getManager()->persist($stream);
+            $this->updateStreamData($video, $videoData);
+            $toUpdate[] = $video;
         }
 
-        $this->registry->getManager()->flush();
+        return array('toUpdate' => $toUpdate, 'toRemove' => $toRemove);
     }
 
     /**
@@ -90,12 +95,14 @@ class YoutubeRequester extends AbstractRequester
 
         $stream->setTitle($data->getSnippet()->getTitle());
 
+        $stream->setPreview($data->getSnippet()->getThumbnails()->getDefault());
+
+        if ('' !== $data->getSnippet()->getThumbnails()->getMedium()) {
+            $stream->setPreview($data->getSnippet()->getThumbnails()->getMedium());
+        }
+
         if ('' !== $data->getSnippet()->getThumbnails()->getHigh()) {
             $stream->setPreview($data->getSnippet()->getThumbnails()->getHigh());
-        } elseif ('' !== $data->getSnippet()->getThumbnails()->getMedium()) {
-            $stream->setPreview($data->getSnippet()->getThumbnails()->getMedium());
-        } else {
-            $stream->setPreview($data->getSnippet()->getThumbnails()->getDefault());
         }
 
         $stream->setViewers($data->getLiveStreamingDetails()->getConcurrentViewers());

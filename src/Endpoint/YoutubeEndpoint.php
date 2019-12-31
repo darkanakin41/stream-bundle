@@ -34,12 +34,55 @@ class YoutubeEndpoint extends AbstractEndpoint
         ));
     }
 
-    protected function initialize()
+    /**
+     * Retrieve the channel id based on his name.
+     *
+     * @param string $channelName the name of the channel
+     *
+     * @return \Google_Service_YouTube_ChannelListResponse
+     */
+    public function getChannelId($channelName)
     {
-        $config = $this->getParameterBag()->get('darkanakin41.stream.config');
-        $developperKey = $config['platform']['google']['developper_key'];
-        $this->client = new Google_Client();
-        $this->client->setDeveloperKey($developperKey);
+        $api = $this->getYoutubeChannelsAPI();
+
+        return $api->listChannels('id', array(
+            'forUsername' => $channelName,
+        ));
+    }
+
+    /**
+     * Retrieve the channel data.
+     *
+     * @param string $identifier the identifier of the channel
+     *
+     * @return \Google_Service_YouTube_ChannelListResponse
+     */
+    public function getChannelData($identifier)
+    {
+        $api = $this->getYoutubeChannelsAPI();
+
+        return $api->listChannels('snippet', array(
+            'id' => $identifier,
+        ));
+    }
+
+    /**
+     * Retrieve the channel videos.
+     *
+     * @param string $identifier the identifier of the channel
+     *
+     * @return \Google_Service_YouTube_SearchListResponse
+     */
+    public function getChannelVideos($identifier, $maxResults = 50)
+    {
+        $api = $this->getYoutubeSearchAPI();
+
+        return $api->listSearch('id, snippet', array(
+            'maxResults' => $maxResults,
+            'order' => 'date',
+            'type' => 'video',
+            'channelId' => $identifier,
+        ));
     }
 
     /**
@@ -52,5 +95,36 @@ class YoutubeEndpoint extends AbstractEndpoint
         $service = new \Google_Service_YouTube($this->client);
 
         return $service->videos;
+    }
+
+    /**
+     * Retrieve the Youtube Videos API.
+     *
+     * @return \Google_Service_YouTube_Resource_Channels
+     */
+    protected function getYoutubeChannelsAPI()
+    {
+        $service = new \Google_Service_YouTube($this->client);
+
+        return $service->channels;
+    }
+
+    /**
+     * Retrieve the Youtube Videos API.
+     *
+     * @return \Google_Service_YouTube_Resource_Search
+     */
+    protected function getYoutubeSearchAPI()
+    {
+        $service = new \Google_Service_YouTube($this->client);
+
+        return $service->search;
+    }
+
+    protected function initialize()
+    {
+        $config = $this->getConfig();
+        $this->client = new Google_Client();
+        $this->client->setDeveloperKey($config['platform']['google']['developper_key']);
     }
 }

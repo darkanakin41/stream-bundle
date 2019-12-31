@@ -6,6 +6,8 @@
 
 namespace Darkanakin41\StreamBundle\Command;
 
+use Darkanakin41\StreamBundle\DependencyInjection\Darkanakin41StreamExtension;
+use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Service\StreamService;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -19,7 +21,7 @@ class RefreshCommand extends Command
 {
     const NB_ITERATION = 10;
 
-    protected static $defaultName = 'darkanakin41:stream:refresh';
+    public static $defaultName = 'darkanakin41:stream:refresh';
 
     /**
      * @var ManagerRegistry
@@ -41,13 +43,13 @@ class RefreshCommand extends Command
         parent::__construct($name);
         $this->managerRegistry = $managerRegistry;
         $this->streamService = $streamService;
-        $this->config = $parameterBag->get('darkanakin41.stream.config');
+        $this->config = $parameterBag->get(Darkanakin41StreamExtension::CONFIG_KEY);
     }
 
     protected function configure()
     {
-        $this->setDescription('Retrieve active stream for enabled game categories');
-        $this->setHelp('Retrieve active stream for enabled game categories');
+        $this->setDescription('Refresh stream data');
+        $this->setHelp('Refresh stream data');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -66,11 +68,19 @@ class RefreshCommand extends Command
             $progressBar->setMessage(ucfirst($provider));
             $progressBar->display();
             for ($i = 0; $i < self::NB_ITERATION; ++$i) {
-                $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(array('platform' => $provider), array('updated' => 'ASC'), 100);
+                /** @var Stream[] $streams */
+                $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findToUpdate($provider);
                 try {
                     $this->streamService->refresh($streams, $provider);
-                } catch (\Exception $e) {
+                } catch (\Exception $e) { // @codeCoverageIgnore
                 }
+                foreach ($streams as $stream) {
+                    if (null !== $stream->getCategory()) {
+                        $this->managerRegistry->getManager()->persist($stream->getCategory());
+                    }
+                    $this->managerRegistry->getManager()->persist($stream);
+                }
+                $this->managerRegistry->getManager()->flush();
                 $progressBar->advance();
             }
         }

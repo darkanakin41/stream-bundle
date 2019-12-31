@@ -6,6 +6,7 @@
 
 namespace Darkanakin41\StreamBundle\Command;
 
+use Darkanakin41\StreamBundle\DependencyInjection\Darkanakin41StreamExtension;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Service\StreamService;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RetrieveCommand extends Command
 {
-    protected static $defaultName = 'darkanakin41:stream:retrieve';
+    public static $defaultName = 'darkanakin41:stream:retrieve';
 
     /**
      * @var ManagerRegistry
@@ -40,7 +41,7 @@ class RetrieveCommand extends Command
         parent::__construct($name);
         $this->managerRegistry = $managerRegistry;
         $this->streamService = $streamService;
-        $this->config = $parameterBag->get('darkanakin41.stream.config');
+        $this->config = $parameterBag->get(Darkanakin41StreamExtension::CONFIG_KEY);
     }
 
     protected function configure()
@@ -57,33 +58,28 @@ class RetrieveCommand extends Command
             '',
         ));
 
-        var_dump($this->config['category_class']);
         /** @var StreamCategory[] $categories */
         $categories = $this->managerRegistry->getRepository($this->config['category_class'])->findBy(array('refresh' => true));
 
-        $created = 0;
-
         $progressBar = new ProgressBar($output, count($categories));
-        $progressBar->setFormat('Categories to process : %current%/%max% [%bar%] %message% %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
-        $progressBar->setMessage(sprintf('(Streams créés : %d)', $created));
-
-        ProgressBar::setPlaceholderFormatterDefinition(
-            'created',
-            function () use ($created) {
-                return $created;
-            }
-        );
+        $progressBar->setFormat('Categories to process : %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
 
         $progressBar->start();
         foreach ($categories as $key => $category) {
             foreach (PlatformNomenclature::getAllConstants() as $provider) {
+                if (PlatformNomenclature::OTHER === $provider) {
+                    continue;
+                }
                 try {
-                    $created += $this->streamService->getFromGame($category, $provider);
-                } catch (\Exception $e) {
+                    $streams = $this->streamService->getFromGame($category, $provider);
+                    foreach ($streams as $stream) {
+                        $this->managerRegistry->getManager()->persist($stream->getCategory());
+                        $this->managerRegistry->getManager()->persist($stream);
+                    }
+                    $this->managerRegistry->getManager()->flush();
+                } catch (\Exception $e) { // @codeCoverageIgnore
                 }
             }
-
-            $progressBar->setMessage(sprintf('(Streams created : %d)', $created));
             $progressBar->advance();
         }
         $progressBar->finish();

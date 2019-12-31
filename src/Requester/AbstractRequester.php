@@ -6,6 +6,7 @@
 
 namespace Darkanakin41\StreamBundle\Requester;
 
+use Darkanakin41\StreamBundle\DependencyInjection\Darkanakin41StreamExtension;
 use Darkanakin41\StreamBundle\Model\Stream;
 use Darkanakin41\StreamBundle\Model\StreamCategory;
 use Darkanakin41\StreamBundle\Twig\StreamExtension;
@@ -32,7 +33,7 @@ abstract class AbstractRequester
         $this->registry = $registry;
         $this->streamExtension = $streamExtension;
 
-        $configuration = $parameterBag->get('darkanakin41.stream.config');
+        $configuration = $parameterBag->get(Darkanakin41StreamExtension::CONFIG_KEY);
         $this->streamClass = $configuration['stream_class'];
         $this->streamCategoryClass = $configuration['category_class'];
     }
@@ -70,14 +71,16 @@ abstract class AbstractRequester
     /**
      * Retrieve streams for the given $category.
      *
-     * @return int Number of stream created
+     * @return Stream[]
      */
     abstract public function updateFromCategory(StreamCategory $category);
 
     /**
      * Update the given stream.
      *
-     * @param Stream[] $streams
+     * @param Stream[] $toProcess
+     *
+     * @return array [toUpdate, toRemove]
      */
-    abstract public function refresh(array $streams);
+    abstract public function refresh(array $toProcess);
 }
