@@ -62,26 +62,26 @@ class UpgradeCommand extends Command
 
         for ($i = 0; $i < self::NB_ITERATION; ++$i) {
             /** @var Stream[] $streams */
-            $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(['platform' => PlatformNomenclature::TWITCH, 'userId' => null]);
+            $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(array('platform' => PlatformNomenclature::TWITCH, 'userId' => null));
             $requester = $this->streamService->getRequester(PlatformNomenclature::TWITCH);
             foreach ($streams as $stream) {
                 try {
                     /** @var TwitchRequester $requester */
                     $data = $requester->getUserData($stream->getIdentifier());
 
-                    if ($data === null) {
+                    if (null === $data) {
                         $this->managerRegistry->getManager()->remove($stream);
-                        $action = "removed";
+                        $action = 'removed';
                     } else {
                         $stream->setUserId($data['id']);
                         $stream->setIdentifier($data['login']);
                         $this->managerRegistry->getManager()->persist($stream);
-                        $action = "upgraded";
+                        $action = 'upgraded';
                     }
                 } catch (\Exception $e) {
-                    if (stripos($e->getMessage(), 'Invalid login names, emails or IDs in request') !== false) {
+                    if (false !== stripos($e->getMessage(), 'Invalid login names, emails or IDs in request')) {
                         $this->managerRegistry->getManager()->remove($stream);
-                        $action = "removed";
+                        $action = 'removed';
                     }
                 }
                 $output->writeln(sprintf('[%s] Stream %s : %s', PlatformNomenclature::TWITCH, $stream->getName(), $action));
