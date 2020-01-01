@@ -3,10 +3,7 @@
 namespace AppTestBundle\Repository;
 
 use AppTestBundle\Entity\Stream;
-use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
  * @method Stream|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,7 +13,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class StreamRepository extends \Darkanakin41\StreamBundle\Repository\StreamRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Stream::class);
     }

@@ -3,8 +3,7 @@
 namespace AppTestBundle\Repository;
 
 use AppTestBundle\Entity\StreamCategory;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
  * @method StreamCategory|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,7 +13,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class StreamCategoryRepository extends \Darkanakin41\StreamBundle\Repository\StreamCategoryRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, StreamCategory::class);
     }
