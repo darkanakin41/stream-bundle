@@ -24,7 +24,7 @@ abstract class StreamRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.platform = :platform');
-        $qb->orderBy('s.updated', 'DESC');
+        $qb->orderBy('s.updated', 'ASC');
         $qb->setMaxResults(100);
         $qb->setParameter('platform', $provider);
 
