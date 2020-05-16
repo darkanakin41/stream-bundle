@@ -19,6 +19,10 @@ class TwitchEndpoint extends AbstractEndpoint
      * @var NewTwitchApi
      */
     private $api;
+    /**
+     * @var \Psr\Http\Message\ResponseInterface
+     */
+    private $accessToken;
 
     /**
      * Retrieve streams from the choosen category.
@@ -32,7 +36,7 @@ class TwitchEndpoint extends AbstractEndpoint
      */
     public function getGameStreams($identifier, $cursor = null)
     {
-        $data = $this->api->getStreamsApi()->getStreams(array(), array(), array($identifier), array(), array(), 100, $cursor, null);
+        $data = $this->api->getStreamsApi()->getStreams(array(), array(), array($identifier), array(), array(), 100, $cursor, null, $this->accessToken['access_token']);
 
         return json_decode($data->getBody()->getContents(), true);
     }
@@ -48,7 +52,7 @@ class TwitchEndpoint extends AbstractEndpoint
      */
     public function getStreams(array $userIds, $cursor = null)
     {
-        $data = $this->api->getStreamsApi()->getStreams($userIds, array(), array(), array(), array(), 100, null, $cursor);
+        $data = $this->api->getStreamsApi()->getStreams($userIds, array(), array(), array(), array(), 100, null, $cursor, $this->accessToken['access_token']);
 
         return json_decode($data->getBody()->getContents(), true);
     }
@@ -82,7 +86,7 @@ class TwitchEndpoint extends AbstractEndpoint
      */
     public function getUsers(array $userIds)
     {
-        $data = $this->api->getUsersApi()->getUsers($userIds, array(), false, null);
+        $data = $this->api->getUsersApi()->getUsers($userIds, array(), false, $this->accessToken['access_token']);
 
         return json_decode($data->getBody()->getContents(), true);
     }
@@ -97,7 +101,7 @@ class TwitchEndpoint extends AbstractEndpoint
     public function getUserDataFromUsername(string $userName)
     {
         $userData = null;
-        $rawData = $this->api->getUsersApi()->getUsers(array(), array($userName), false, null);
+        $rawData = $this->api->getUsersApi()->getUsers(array(), array($userName), false, $this->accessToken['access_token']);
         $data = json_decode($rawData->getBody()->getContents(), true);
         if (isset($data['data']) && isset($data['data'][0])) {
             $userData = $data['data'][0];
@@ -114,5 +118,6 @@ class TwitchEndpoint extends AbstractEndpoint
         $this->client = new HelixGuzzleClient($clientId);
 
         $this->api = new NewTwitchApi($this->client, $clientId, $clientSecret);
+        $this->accessToken = json_decode($this->api->getOauthApi()->getAppAccessToken()->getBody(), true);
     }
 }
