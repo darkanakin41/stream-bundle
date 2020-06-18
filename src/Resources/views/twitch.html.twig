@@ -3,5 +3,5 @@
 {% endblock stream %}
 
 {% block chat %}
-    <iframe frameborder="0" height="{{ height }}" scrolling="no" src="//www.twitch.tv/embed/{{ stream.identifier }}/chat" width="{{ width }}" id="stream-chat-{{ stream.userId }}"></iframe>
+    <iframe frameborder="0" height="{{ height }}" scrolling="no" src="//www.twitch.tv/embed/{{ stream.identifier }}/chat?parent={{ referer }}" width="{{ width }}" id="stream-chat-{{ stream.userId }}"></iframe>
 {% endblock chat %}

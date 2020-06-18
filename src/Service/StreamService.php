@@ -139,11 +139,11 @@ class StreamService
         $stream->setPlatform($platform);
         $stream->setStatus(StatusNomenclature::OFFLINE);
         $stream->setUpdated(new DateTime());
-        $stream->setTags([]);
+        $stream->setTags(array());
 
         $this->registry->getManager()->persist($stream);
 
-        $this->refresh([$stream], $stream->getPlatform());
+        $this->refresh(array($stream), $stream->getPlatform());
 
         $this->registry->getManager()->flush();
 

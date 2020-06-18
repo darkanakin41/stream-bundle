@@ -57,32 +57,30 @@ class UpgradeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-        $outputStyle = new OutputFormatterStyle('white', 'green', ['bold']);
-        $output->getFormatter()->setStyle("success", $outputStyle);
+        $outputStyle = new OutputFormatterStyle('white', 'green', array('bold'));
+        $output->getFormatter()->setStyle('success', $outputStyle);
 
         $output->writeln(array(
             'Darkanakin41 Stream Upgrade',
             '============',
             '',
         ));
-        $synthesis = [];
+        $synthesis = array();
 
         for ($i = 0; $i < self::NB_ITERATION; ++$i) {
             $output->writeln(sprintf('[%s] Iteration %d : <info>START</info>', PlatformNomenclature::TWITCH, $i));
             /** @var Stream[] $streams */
-            $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(array('platform' => PlatformNomenclature::TWITCH, 'userId' => null), [], self::NB_PER_ITERATION);
+            $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(array('platform' => PlatformNomenclature::TWITCH, 'userId' => null), array(), self::NB_PER_ITERATION);
             $requester = $this->streamService->getRequester(PlatformNomenclature::TWITCH);
             $table = new Table($output->section());
-            $table->setHeaders(['Platform', 'Stream', 'Status']);
+            $table->setHeaders(array('Platform', 'Stream', 'Status'));
             foreach ($streams as $stream) {
-                $action = "";
+                $action = '';
                 if (empty($stream->getIdentifier())) {
                     $this->managerRegistry->getManager()->remove($stream);
                     $action = '<error>Removed</error>';
                 } else {
                     try {
-
                         /** @var TwitchRequester $requester */
                         $data = $requester->getUserData($stream->getIdentifier());
 
@@ -105,8 +103,8 @@ class UpgradeCommand extends Command
                 if (!isset($synthesis[$action])) {
                     $synthesis[$action] = 0;
                 }
-                $synthesis[$action]++;
-                $table->addRow([ucfirst(PlatformNomenclature::TWITCH), $stream->getName(), $action]);
+                ++$synthesis[$action];
+                $table->addRow(array(ucfirst(PlatformNomenclature::TWITCH), $stream->getName(), $action));
             }
             $table->render();
             $this->managerRegistry->getManager()->flush();

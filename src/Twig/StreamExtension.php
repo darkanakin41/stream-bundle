@@ -8,6 +8,7 @@ namespace Darkanakin41\StreamBundle\Twig;
 
 use Darkanakin41\StreamBundle\Model\Stream;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Throwable;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -32,11 +33,16 @@ class StreamExtension extends AbstractExtension
      * @var Environment
      */
     private $twig;
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
 
-    public function __construct(ContainerInterface $container, Environment $twig)
+    public function __construct(ContainerInterface $container, Environment $twig, RequestStack $requestStack)
     {
         $this->container = $container;
         $this->twig = $twig;
+        $this->requestStack = $requestStack;
     }
 
     public function getFilters()
@@ -64,13 +70,12 @@ class StreamExtension extends AbstractExtension
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function renderVideo(Stream $stream, array $vars = array('width' => 620, 'height' => 380, 'volume' => '0'))
+    public function renderVideo(Stream $stream, array $vars = array())
     {
         try {
-            $vars['stream'] = $stream;
             $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
 
-            return $template->renderBlock('stream', $vars);
+            return $template->renderBlock('stream', array_merge($vars, array('stream' => $stream, 'width' => 620, 'height' => 380, 'volume' => '0')));
         } catch (LoaderError $e) {
         }
 
@@ -86,13 +91,12 @@ class StreamExtension extends AbstractExtension
      * @throws SyntaxError
      * @throws Throwable
      */
-    public function renderChat(Stream $stream, array $vars = array('width' => 340, 'height' => 380, 'volume' => '0'))
+    public function renderChat(Stream $stream, array $vars = array())
     {
         try {
-            $vars['stream'] = $stream;
             $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
             if ($template->hasBlock('chat')) {
-                return $template->renderBlock('chat', $vars);
+                return $template->renderBlock('chat', array_merge($vars, array('stream' => $stream, 'width' => 340, 'height' => 380, 'referer' => $this->requestStack->getCurrentRequest()->getHttpHost())));
             }
         } catch (LoaderError $e) {
         }
@@ -111,7 +115,6 @@ class StreamExtension extends AbstractExtension
     public function hasChat(Stream $stream)
     {
         try {
-            $options['stream'] = $stream;
             $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
 
             return $template->hasBlock('chat');

@@ -28,6 +28,7 @@
     "symfony/asset": "*",
     "symfony/doctrine-bridge": "^4.3",
     "symfony/framework-bundle": "*",
+    "symfony/http-foundation": "^4.3",
     "symfony/orm-pack": "*",
     "symfony/twig-bundle": "*",
     "symfony/validator": "*",
