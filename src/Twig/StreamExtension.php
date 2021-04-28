@@ -96,7 +96,11 @@ class StreamExtension extends AbstractExtension
         try {
             $template = $this->twig->load(sprintf('@Darkanakin41Stream/%s.html.twig', $stream->getPlatform()));
             if ($template->hasBlock('chat')) {
-                return $template->renderBlock('chat', array_merge($vars, array('stream' => $stream, 'width' => 340, 'height' => 380, 'referer' => $this->requestStack->getCurrentRequest()->getHttpHost())));
+                $referer = null;
+                if ($this->requestStack->getCurrentRequest() !== null) {
+                    $referer = $this->requestStack->getCurrentRequest()->getHttpHost();
+                }
+                return $template->renderBlock('chat', array_merge($vars, array('stream' => $stream, 'width' => 340, 'height' => 380, 'referer' => $referer)));
             }
         } catch (LoaderError $e) {
         }

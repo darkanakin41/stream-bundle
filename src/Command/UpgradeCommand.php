@@ -72,7 +72,7 @@ class UpgradeCommand extends Command
             /** @var Stream[] $streams */
             $streams = $this->managerRegistry->getRepository($this->config['stream_class'])->findBy(array('platform' => PlatformNomenclature::TWITCH, 'userId' => null), array(), self::NB_PER_ITERATION);
             $requester = $this->streamService->getRequester(PlatformNomenclature::TWITCH);
-            $table = new Table($output->section());
+            $table = new Table($output);
             $table->setHeaders(array('Platform', 'Stream', 'Status'));
             foreach ($streams as $stream) {
                 $action = '';

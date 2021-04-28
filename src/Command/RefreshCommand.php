@@ -75,6 +75,7 @@ class RefreshCommand extends Command
                 } catch (\Exception $e) { // @codeCoverageIgnore
                 }
                 foreach ($streams as $stream) {
+                    $stream->setUpdated(new \DateTime());
                     if (null !== $stream->getCategory()) {
                         $this->managerRegistry->getManager()->persist($stream->getCategory());
                     }

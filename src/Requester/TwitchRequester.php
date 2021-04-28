@@ -60,6 +60,7 @@ class TwitchRequester extends AbstractRequester
                             continue; // @codeCoverageIgnore
                         }
                         $stream = $this->createStream($streamData, $category);
+                        $stream->setUpdated(new DateTime());
                         $streams[$stream->getUserId()] = $stream;
                     }
                 }
@@ -103,8 +104,9 @@ class TwitchRequester extends AbstractRequester
             if (isset($data['data'])) {
                 $empty = (0 === count($data['data']));
                 foreach ($data['data'] as $streamData) {
-                    $stream = $streams[strtolower($streamData['user_id'])];
-                    $this->updateStream($stream, $streamData);
+                    if (isset($streams[strtolower($streamData['user_id'])])) {
+                        $this->updateStream($streams[strtolower($streamData['user_id'])], $streamData);
+                    }
                 }
             }
 
@@ -136,7 +138,7 @@ class TwitchRequester extends AbstractRequester
     /**
      * Create stream.
      *
-     * @param array          $streamData the data to process
+     * @param array $streamData the data to process
      * @param StreamCategory $category
      *
      * @return Stream the stream created
@@ -161,8 +163,8 @@ class TwitchRequester extends AbstractRequester
     /**
      * Update stream with given data.
      *
-     * @param Stream         $stream         the stream to update
-     * @param array          $streamData     the data do process
+     * @param Stream $stream the stream to update
+     * @param array $streamData the data do process
      * @param StreamCategory $streamCategory the category to associate it to (if null, will look for it using the API)
      *
      * @return void
@@ -220,7 +222,7 @@ class TwitchRequester extends AbstractRequester
      * Check whether of not there is a next page.
      *
      * @param string $currentCursor the current cursor
-     * @param array  $data          the data from the API
+     * @param array $data the data from the API
      *
      * @return bool
      */

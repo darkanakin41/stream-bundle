@@ -68,7 +68,7 @@ class TwitchEndpoint extends AbstractEndpoint
      */
     public function getGame($gameId)
     {
-        $data = $this->api->getGamesApi()->getGames(array($gameId));
+        $data = $this->api->getGamesApi()->getGames(array($gameId), [], $this->accessToken['access_token']);
         $arrayData = json_decode($data->getBody()->getContents(), true);
         if (!isset($arrayData['data']) || 0 === count($arrayData['data'])) {
             return array();
@@ -118,6 +118,6 @@ class TwitchEndpoint extends AbstractEndpoint
         $this->client = new HelixGuzzleClient($clientId);
 
         $this->api = new NewTwitchApi($this->client, $clientId, $clientSecret);
-        $this->accessToken = json_decode($this->api->getOauthApi()->getAppAccessToken()->getBody(), true);
+        $this->accessToken = json_decode($this->api->getOauthApi()->getAppAccessToken()->getBody()->getContents(), true);
     }
 }

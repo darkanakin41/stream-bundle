@@ -17,7 +17,7 @@
     }
   ],
   "require": {
-    "php": "^7.1",
+    "php": "^7",
     "darkanakin41/core-bundle": "dev-master",
     "doctrine/common": "^2.11",
     "doctrine/doctrine-bundle": "^2.0",
@@ -26,9 +26,9 @@
     "google/apiclient": "^2.0",
     "nicklaw5/twitch-api-php": "^2.1",
     "symfony/asset": "*",
-    "symfony/doctrine-bridge": "^4.3",
+    "symfony/doctrine-bridge": "^4.3 || ^5",
     "symfony/framework-bundle": "*",
-    "symfony/http-foundation": "^4.3",
+    "symfony/http-foundation": "^4.3 || ^5",
     "symfony/orm-pack": "*",
     "symfony/twig-bundle": "*",
     "symfony/validator": "*",

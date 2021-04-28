@@ -5,8 +5,7 @@ namespace Darkanakin41\StreamBundle\Tests\Command;
 
 use AppTestBundle\Entity\Stream;
 use AppTestBundle\Entity\StreamCategory;
-use Darkanakin41\StreamBundle\Command\UpgradeCommand;
-use Darkanakin41\StreamBundle\Command\RetrieveCommand;
+use Darkanakin41\StreamBundle\Command\RefreshCommand;
 use Darkanakin41\StreamBundle\Nomenclature\PlatformNomenclature;
 use Darkanakin41\StreamBundle\Nomenclature\StatusNomenclature;
 use Darkanakin41\StreamBundle\Requester\TwitchRequester;
@@ -53,7 +52,7 @@ class RefreshCommandTest extends AbstractTestCase
         $this->getDoctrine()->getManager()->persist($stream4);
         $this->getDoctrine()->getManager()->flush();
 
-        $command = $application->find(UpgradeCommand::$defaultName);
+        $command = $application->find(RefreshCommand::$defaultName);
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
@@ -64,7 +63,8 @@ class RefreshCommandTest extends AbstractTestCase
         }
     }
 
-    private function getOnlineStream($categoryId){
+    private function getOnlineStream($categoryId)
+    {
         /** @var TwitchRequester $requester */
         $requester = self::$container->get(TwitchRequester::class);
 

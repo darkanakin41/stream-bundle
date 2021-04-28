@@ -5,3 +5,18 @@ vendor
 composer.lock
 .*.cache
 build
+docker-compose.override.yml
+
+###> inetum-orleans/docker-devbox ###
+/.bin/composer
+/.bin/php
+/.bin/symfony
+/.docker/php/.ca-certificates
+/.docker/php/Dockerfile
+/.docker/php/fixuid.tar.gz
+/.docker/php/msmtprc
+/.bash_enter
+/.bash_leave
+/*ddb.local.*
+/docker-compose.yml
+###< inetum-orleans/docker-devbox ###

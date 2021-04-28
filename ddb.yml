@@ -1,0 +1,11 @@
+docker:
+  port_prefix: 521
+
+file:
+    excludes:
+    - '**/.git'
+    - '**/cache'
+    - '**/node_modules'
+    - '**/public/media'
+    - '**/var'
+    - '**/vendor'
